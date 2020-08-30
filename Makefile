@@ -1,5 +1,5 @@
 
-OBJS=snake.o
+OBJS=snake.o utils.o
 SRCS=$(OBJS:%.0=%.c)
 CFLAGS=-g -Wall
 LDLIBS=
