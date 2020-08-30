@@ -40,7 +40,6 @@ Node *node;
     snake -> head -> prev = node;
     node -> next = snake -> head;
     snake -> head = node;
-
 }
 
 
@@ -205,11 +204,31 @@ void display(void)
 
 
 
-int main(void)
+void usage(void)
 {
+    printf("[Usage] snake game\n");
+    printf("   f : right\n");
+    printf("   e : up\n");
+    printf("   d : down\n");
+    printf("   a : left\n");
+    printf("   q : quit\n");
+    exit(0);
+}
 
+
+
+
+int main(int argc, char **argv)
+{
 int time = 100000 * 1;
 Snake *snake;
+
+
+    if(argc > 1){
+        if(strcmp(argv[1], "-h") == 0)
+            usage();
+    }
+
 
     snake = (Snake *)malloc(sizeof(Snake));
     assert(snake != NULL);
@@ -228,6 +247,7 @@ Snake *snake;
     }
 
     close_termios();
+    free(snake);
 
     printf("game over\n");
     printf("you got %d foods\n", get_foods);

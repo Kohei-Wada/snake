@@ -12,7 +12,6 @@ typedef struct {
 }Snake;
 
 
-
 enum FIELD_ELEMS{
     FIELD,
     SNAKE,
