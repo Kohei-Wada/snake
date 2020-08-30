@@ -7,23 +7,22 @@
 #include "snake.h"
 #include "utils.h"
 
-
 #define STAGE_X 100
 #define STAGE_Y 50
 
 
-enum Elements{
-    FIELD,
-    SNAKE,
-    FOOD,
-    WALL_1,
-    WALL_2
-} elem;
-
 
 int _stage[STAGE_X][STAGE_Y] = {0};
 int  stage[STAGE_X][STAGE_Y] = {0};
+enum FIELD_ELEMS elem;
+int init_x = STAGE_X/2;
+int init_y = STAGE_Y/2;
+
+int foods = 10;
+int vx = 1;
+int vy = 0;
 int die = 0;
+
 int get_foods = 0;
 
 
@@ -38,10 +37,8 @@ Node *node;
 
     node -> x = x;
     node -> y = y;
-
     snake -> head -> prev = node;
     node -> next = snake -> head;
-
     snake -> head = node;
 
 }
@@ -54,8 +51,8 @@ Node *node;
     node = (Node *)malloc(sizeof(Node));
     assert(node != NULL);
 
-    node -> x = 50;
-    node -> y = 20;
+    node -> x = init_x;
+    node -> y = init_y;
     node -> next = NULL;
     node -> prev = NULL;
 
@@ -65,16 +62,18 @@ Node *node;
 
 
 
+
 void set_food()
 {
-    _stage[rand()%(STAGE_X-2) + 1][rand()%(STAGE_Y-2)+1] = FOOD;
+    _stage[rand()%(STAGE_X-2) + 1][rand()%(STAGE_Y-2) + 1] = FOOD;
 }
+
+
 
 
 void set_foods()
 {
-int num = 10;
-    for(int i = 0; i < num; ++i)
+    for(int i = 0; i < foods; ++i)
         set_food();
 }
 
@@ -129,7 +128,6 @@ Node *curret = snake -> head;
 
 void set_stage(Snake *snake)
 {
-static int vx=1, vy;
 
     if(kbhit()){
         char ch = getch();
@@ -166,6 +164,7 @@ static int vx=1, vy;
                 }
                 break;
             }
+
             case 'q': die = 1; break;
         }
     }
@@ -218,6 +217,7 @@ Snake *snake;
     open_termios();
 
     init_stage(snake);
+
     while(1){
         system("clear");
         set_stage(snake);
