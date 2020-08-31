@@ -15,15 +15,17 @@
 int _stage[STAGE_X][STAGE_Y] = {0};
 int  stage[STAGE_X][STAGE_Y] = {0};
 enum FIELD_ELEMS elem;
+
 int init_x = STAGE_X/2;
 int init_y = STAGE_Y/2;
+int foods  = 10;
+int vx     = 1;
+int vy     = 0;
+int die    = 0;
 
-int foods = 10;
-int vx = 1;
-int vy = 0;
-int die = 0;
 
 int get_foods = 0;
+int easy      = 0;
 
 
 
@@ -97,9 +99,9 @@ void init_stage(Snake *snake)
 void next_snake(Snake *snake, int vx, int vy)
 {
 Node *curret = snake -> head;
+int x = curret -> x + vx;
+int y = curret -> y + vy;
 
-    int x = curret -> x + vx;
-    int y = curret -> y + vy;
 
     if(stage[x][y] == FIELD){
         curret = snake -> tail;
@@ -109,15 +111,19 @@ Node *curret = snake -> head;
             curret -> y = curret -> prev -> y;
             curret      = curret -> prev;
         }
+
         snake -> head -> x = x;
         snake -> head -> y = y;
     }
-
     else if(stage[x][y] == FOOD){
         _stage[x][y] = FIELD;
         ++get_foods;
         set_food();
         add_head(snake, x, y);
+    }
+    else if(stage[x][y] == WALL_1 || stage[x][y] == WALL_2){
+        if(!easy)
+            die = 1;
     }
     else if(stage[x][y] == SNAKE)
         die = 1;
@@ -192,8 +198,8 @@ void display(void)
             switch (stage[x][y]) {
                 case WALL_1: printf("="); break;
                 case WALL_2: printf("|"); break;
-                case SNAKE : printf("+"); break;
-                case FOOD  : printf("@"); break;
+                case SNAKE : printf("\e[32m+\e[0m"); break;
+                case FOOD  : printf("\e[31m@\e[0m"); break;
                 default    : printf(" "); break;
             }
         }
@@ -207,6 +213,9 @@ void display(void)
 void usage(void)
 {
     printf("[Usage] snake game\n");
+    printf("   snake -e -> easy mode\n");
+    printf("   snake -h -> show this help\n");
+    printf("[Operations]\n");
     printf("   f : right\n");
     printf("   e : up\n");
     printf("   d : down\n");
@@ -217,15 +226,17 @@ void usage(void)
 
 
 
-
 int main(int argc, char **argv)
 {
 int time = 100000 * 1;
 Snake *snake;
 
-
     if(argc > 1){
         if(strcmp(argv[1], "-h") == 0)
+            usage();
+        else if(strcmp(argv[1], "-e") == 0)
+            easy = 1;
+        else
             usage();
     }
 
