@@ -131,7 +131,7 @@ int y = curret -> y + vy;
 
 
 
-void set_stage(Snake *snake)
+void get_key()
 {
 
     if(kbhit()){
@@ -169,12 +169,17 @@ void set_stage(Snake *snake)
                 }
                 break;
             }
-
             case 'q': die = 1; break;
         }
     }
+}
 
 
+
+void set_stage(Snake *snake)
+{
+
+    get_key();
     next_snake(snake, vx, vy);
     memcpy(stage, _stage, sizeof(_stage));
 
@@ -200,7 +205,7 @@ void display(void)
                 case WALL_2: printf("|"); break;
                 case SNAKE : printf("\e[32m+\e[0m"); break;
                 case FOOD  : printf("\e[31m@\e[0m"); break;
-                default    : printf(" "); break;
+                case FIELD : printf(" "); break;
             }
         }
         printf("\n");
