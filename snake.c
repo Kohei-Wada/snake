@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <termios.h>
+#include <time.h>
 #include "snake.h"
 #include "utils.h"
 
@@ -82,6 +83,7 @@ void set_foods()
 
 void init_stage(Snake *snake)
 {
+    srand((unsigned int)time(NULL));
     for(int y = 0; y < STAGE_Y; ++y)
         _stage[0][y] = _stage[STAGE_X-1][y] = WALL_2;
 
