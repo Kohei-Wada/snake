@@ -5,9 +5,7 @@
 #include "snake.h"
 #include "list.h"
 
-
 enum {FIELD, WALL_H, WALL_V, SNAKE, FOOD};
-
 
 typedef struct game {
 	char *buf;

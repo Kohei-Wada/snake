@@ -29,23 +29,6 @@ void snake_update(snake_t *s)
 }
 
 
-void snake_test(snake_t *s)
-{
-	pos_t *current, *prev;
-
-	for (int i = s->len - 1; i > 0; --i) {
-		current = list_get(s->l, i);
-		prev = list_get(s->l , i - 1);
-
-		current->x = prev->x; 
-		current->y = prev->y;
-	}
-	current = list_get(s->l, 0);
-	current->x++;
-	current->y++;
-}
-
-
 void snake_set_v(snake_t *s, int vx, int vy)
 {
 	s->vx = vx;
@@ -108,13 +91,4 @@ void snake_add(snake_t *s, int x, int y)
 	++s->len;
 }
 
-
-void snake_display(snake_t *s)
-{
-
-	for (int i = 0; i < s->len; ++i) {
-		pos_t *p = list_get(s->l, i);
-		printf("i = %d, x = %d, y = %d\n", i, p->x, p->y);
-	}
-}
 
