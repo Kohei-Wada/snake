@@ -87,7 +87,6 @@ void snake_add(snake_t *s, int x, int y)
 	pos_t *p = malloc(sizeof(pos_t));
 	p->x = x; p->y = y;
 	list_add_head(s->l, p);
-
 	++s->len;
 }
 

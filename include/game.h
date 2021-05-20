@@ -27,5 +27,6 @@ char game_current_key(game_t *g);
 void game_stage_size(game_t *g, int *wid, int *hgt);
 void game_set_snake(game_t *g, snake_t *s);
 char **game_get_stage(game_t *g);
+void game_result(game_t *g);
 
 #endif

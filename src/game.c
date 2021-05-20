@@ -51,11 +51,11 @@ int game_init(game_t **g, int wid, int hgt)
 	int ret;
 	*g = malloc(sizeof(game_t));
 
-	(*g)->buf = malloc(sizeof(char));
-	(*g)->active = 1;
+	(*g)->buf       = malloc(sizeof(char));
+	(*g)->active    = 1;
 	(*g)->stage_wid = wid;
 	(*g)->stage_hgt = hgt;
-	(*g)->stage = stage_init(wid, hgt);
+	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
 
 
@@ -77,8 +77,8 @@ void game_stage_size(game_t *g, int *wid, int *hgt)
 static void game_plot_snake(game_t *g)
 {
 	char **stage = g->stage;
-	char **cpy = g->stage_cpy;
-	snake_t *s = g->snake;
+	char **cpy   = g->stage_cpy;
+	snake_t *s   = g->snake;
 
 	for (int i = 0; i < g->stage_wid; ++i) {
 		memcpy(stage[i], cpy[i], sizeof(char) * g->stage_hgt);
@@ -147,13 +147,12 @@ static void game_update(game_t *g)
 			break;
 		}
 
-		//clear buf
+		//clear key buf
 		pthread_mutex_lock(&g->mutex);
 		*g->buf = 0;
 		pthread_mutex_unlock(&g->mutex);
 	}
 }
-
 
 void game_free(game_t *g)
 {
@@ -170,7 +169,6 @@ void game_loop(game_t *g)
 	}
 }
 
-
 char **game_get_stage(game_t *g)
 {
 	return g->stage;
@@ -185,3 +183,12 @@ void game_key_add(game_t *g, char key)
 		pthread_mutex_unlock(&g->mutex);
 	}
 }
+
+
+void game_result(game_t *g)
+{
+	printf("you're length is %d\n", snake_len(g->snake));
+}
+
+
+
