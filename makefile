@@ -8,16 +8,28 @@ SOURCES = $(OBJECTS: %c = %o)
 LIBDIR = lib
 OBJDIR = obj
 SOURCEDIR = src
+BINDIR = bin
 
 
-#$(warning $(SOURCES))
-bin/$(TARGET) : $(addprefix obj/, $(notdir $(OBJECTS))) 
+
+$(BINDIR)/$(TARGET) : $(addprefix obj/, $(notdir $(OBJECTS))) 
+	@if [ ! -d $(BINDIR) ]; then\
+		mkdir $(BINDIR);\
+	fi
 	$(CC) $(CFLAGS)  -o $@ $^  $(LDLIBS)
 
 $(OBJDIR)/%.o : $(SOURCEDIR)/%.c
+	@if [ ! -d $(OBJDIR) ]; then\
+		mkdir $(OBJDIR);\
+	fi;
 	$(CC) $(CFLAGS) $(LDLIBS) $(INCLUDE) -o $@ -c $< 
 
 $(OBJDIR)/%.o : $(LIBDIR)/%.c
+	@if [ ! -d $(OBJDIR) ]; then\
+		mkdir $(OBJDIR);\
+	fi;
 	$(CC) $(CFLAGS) $(LDLIBS) $(INCLUDE) -o $@ -c $<
+	
+
 clean :
 	rm -f bin/$(TARGET) $(OBJDIR)/*
