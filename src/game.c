@@ -142,19 +142,23 @@ static void game_update(game_t *g)
 			break;
 
 		case 'a' : 
-			snake_set_v(g->snake, -1, 0); 
+			if (vx != 1) 
+				snake_set_v(g->snake, -1, 0); 
 			break;
 
 		case 'f' : 
-			snake_set_v(g->snake, 1 , 0); 
+			if (vx != -1)
+				snake_set_v(g->snake, 1 , 0); 
 			break;
 
 		case 'e' : 
-			snake_set_v(g->snake, 0, -1); 
+			if (vy != 1)
+				snake_set_v(g->snake, 0, -1); 
 			break; 
 
 		case 'd' : 
-			snake_set_v(g->snake, 0, 1); 
+			if (vy != -1)
+				snake_set_v(g->snake, 0, 1); 
 			break;
 		}
 
