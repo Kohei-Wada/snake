@@ -28,7 +28,6 @@ static void ui_display(ui_t *ui)
 			case SNAKE:printf("\e[32m+\e[0m"); break;
 			case FOOD: printf("\e[31m@\e[0m");
 			}
-
 		}
 		printf("\n");
 	}
@@ -37,9 +36,15 @@ static void ui_display(ui_t *ui)
 
 int ui_init(ui_t **ui, game_t *g)
 {
+
 	open_termios();
-	int retval;
 	*ui = malloc(sizeof(ui_t));
+
+	if (!(*ui)) {
+		perror("malloc"); 
+		return 1;
+	}
+
 	(*ui)->g = g;
 	(*ui)->stage = game_get_stage(g);
 

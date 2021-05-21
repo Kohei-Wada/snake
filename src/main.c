@@ -34,19 +34,25 @@ int main(int argc, char **argv)
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
 
+	int ret;
 	game_t *g;
 	snake_t *s;
 	ui_t *ui;
 
-	game_init(&g, size.ws_col, size.ws_row - 2);
-	ui_init(&ui, g);
+	ret = game_init(&g, size.ws_col, size.ws_row - 2);
+	if (ret) goto fail;
+	ret = ui_init(&ui, g);
+	if (ret) goto fail;
+	ret = snake_init(&s, g, size.ws_col/2, size.ws_row /2);
+	if (ret) goto fail;
+
+
 	ui_start(ui);
-	snake_init(&s, g);
-
 	game_loop(g);
-
 	game_result(g);
 
+
+  fail:
 	snake_free(s);
 	ui_free(ui);
 	game_free(g);

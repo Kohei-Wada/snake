@@ -15,7 +15,6 @@ typedef struct snake {
 void snake_update(snake_t *s)
 {
 	pos_t *current, *prev;
-
 	for (int i = s->len - 1; i > 0; --i) {
 		current = list_get(s->l, i);
 		prev = list_get(s->l , i - 1);
@@ -42,17 +41,28 @@ void snake_get_v(snake_t *s, int *vx, int *vy)
 }
 
 
-int snake_init(snake_t **s, game_t *g) 
+int snake_init(snake_t **s, game_t *g, int x, int y) 
 {
+
+	int ret;
+
 	*s = malloc(sizeof(snake_t));
+	if (!(*s)) {
+		perror("malloc");
+		return 1;
+	}
 
 	(*s)->len = 0;
 	(*s)->vx = 1;
 	(*s)->vy = 0;
 
-	list_init(&(*s)->l);
+	ret = list_init(&(*s)->l);
+	if (ret) {
+		perror("list_init");
+		return 1;
+	}
 
-	snake_add(*s, 50, 50);
+	snake_add(*s, x, y);
 	game_set_snake(g, *s);
 
 	return 0;

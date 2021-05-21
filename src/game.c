@@ -50,6 +50,10 @@ int game_init(game_t **g, int wid, int hgt)
 {
 	int ret;
 	*g = malloc(sizeof(game_t));
+	if (!(*g)) {
+		perror("malloc"); 
+		return 1;
+	}
 
 	(*g)->buf       = malloc(sizeof(char));
 	(*g)->active    = 1;
@@ -59,9 +63,16 @@ int game_init(game_t **g, int wid, int hgt)
 	(*g)->stage_cpy = stage_init(wid, hgt);
 
 
+	if (!(*g)->stage || !(*g)->stage_cpy)
+		return 1;
+
 	game_set_foods(*g);
 
 	ret = pthread_mutex_init(&(*g)->mutex, NULL);
+	if (ret) {
+		perror("mutex_init");
+		return 1;
+	}
 
 	return ret;
 }
@@ -92,7 +103,6 @@ static void game_plot_snake(game_t *g)
 }
 
 
-
 static void game_update(game_t *g)
 {
 
@@ -109,6 +119,7 @@ static void game_update(game_t *g)
 	case WALL_H:
 	case WALL_V:
 	case SNAKE :
+		g->active = 0;//dead
 		break;
 
 	case FIELD : 
