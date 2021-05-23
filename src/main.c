@@ -29,23 +29,20 @@ int main(int argc, char **argv)
 		else usage();
 	}
 	
-
 	struct winsize size;
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
 
-	int ret;
 	game_t *g;
 	snake_t *s;
 	ui_t *ui;
 
-	ret = game_init(&g, size.ws_col, size.ws_row - 2);
-	if (ret) goto fail;
-	ret = ui_init(&ui, g);
-	if (ret) goto fail;
-	ret = snake_init(&s, g, size.ws_col/2, size.ws_row /2);
-	if (ret) goto fail;
-
+	if (game_init(&g, size.ws_col, size.ws_row - 2))
+		goto fail;
+	if (ui_init(&ui, g)) 
+		goto fail;
+	if (snake_init(&s, g, size.ws_col/2, size.ws_row /2)) 
+		goto fail;
 
 	ui_start(ui);
 	game_loop(g);

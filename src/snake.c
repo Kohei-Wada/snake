@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "game.h"
 
+#include "game.h"
 #include "list.h"
 #include "snake.h"
+
 
 typedef struct snake {
 	list_t *l;
@@ -25,6 +26,7 @@ void snake_update(snake_t *s)
 	current = list_get(s->l, 0);
 	current->x += s->vx;
 	current->y += s->vy;
+
 }
 
 
@@ -43,7 +45,6 @@ void snake_get_v(snake_t *s, int *vx, int *vy)
 
 int snake_init(snake_t **s, game_t *g, int x, int y) 
 {
-
 	int ret;
 
 	*s = malloc(sizeof(snake_t));
@@ -66,6 +67,7 @@ int snake_init(snake_t **s, game_t *g, int x, int y)
 	game_set_snake(g, *s);
 
 	return 0;
+
 }
 
 

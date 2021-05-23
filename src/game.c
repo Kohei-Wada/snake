@@ -1,4 +1,5 @@
 #include <stdlib.h> 
+#include <time.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -10,16 +11,17 @@
 #include "game.h"
 
 
+
 static void game_set_food(game_t *g)
 {
 	char **stage = g->stage_cpy;
 	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
 }
 
-static void game_set_foods(game_t *g)
+static void game_set_foods(game_t *g, int n)
 {
 	srand(time(NULL));
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < n; ++i)
 		game_set_food(g);
 }
 
@@ -66,7 +68,7 @@ int game_init(game_t **g, int wid, int hgt)
 	if (!(*g)->stage || !(*g)->stage_cpy)
 		return 1;
 
-	game_set_foods(*g);
+	game_set_foods(*g, 10);
 
 	ret = pthread_mutex_init(&(*g)->mutex, NULL);
 	if (ret) {
@@ -180,7 +182,7 @@ void game_loop(game_t *g)
 {
 	while (g->active) {
 		game_update(g);
-		usleep(50000);
+		usleep(70000);
 	}
 }
 
@@ -200,9 +202,41 @@ void game_key_add(game_t *g, char key)
 }
 
 
+
+void save_result(int data)
+{
+	char file[100];
+	char buf[100];
+
+	sprintf(file, "/home/%s/.snake/data", getlogin());
+
+	FILE *f = fopen(file, "a");
+	if (!f) return;
+
+	time_t t;
+	struct tm *tm;
+
+	t = time(NULL);
+	tm = localtime(&t);
+
+	sprintf(buf, "%d/%d/%d/:%d\n", tm->tm_year + 1900, tm->tm_mon + 1,
+			tm->tm_mday, data);
+
+	fwrite(buf, strlen(buf), 1, f);
+
+	fclose(f);
+}
+
+
+
+
 void game_result(game_t *g)
 {
-	printf("you're length is %d\n", snake_len(g->snake));
+	int len = snake_len(g->snake);
+
+	save_result(len);
+	
+	printf("your length is %d\n",len); 
 }
 
 

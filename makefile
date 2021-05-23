@@ -12,6 +12,9 @@ BINDIR = bin
 
 
 
+
+all: $(BINDIR)/$(TARGET)
+
 $(BINDIR)/$(TARGET) : $(addprefix obj/, $(notdir $(OBJECTS))) 
 	@if [ ! -d $(BINDIR) ]; then\
 		mkdir $(BINDIR);\
@@ -31,5 +34,9 @@ $(OBJDIR)/%.o : $(LIBDIR)/%.c
 	$(CC) $(CFLAGS) $(LDLIBS) $(INCLUDE) -o $@ -c $<
 	
 
+install:
+	mkdir ~/.snake/
+
 clean :
 	rm -f bin/$(TARGET) $(OBJDIR)/*
+	rm -r ~/.snake
