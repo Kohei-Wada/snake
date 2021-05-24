@@ -203,7 +203,7 @@ void game_key_add(game_t *g, char key)
 
 
 
-void save_result(int data)
+static void save_result(int data)
 {
 	char file[100];
 	char buf[100];
@@ -219,8 +219,8 @@ void save_result(int data)
 	t = time(NULL);
 	tm = localtime(&t);
 
-	sprintf(buf, "%d/%d/%d/:%d\n", tm->tm_year + 1900, tm->tm_mon + 1,
-			tm->tm_mday, data);
+	sprintf(buf, "%d/%d/%d/%d/%d/%d,%d\n", tm->tm_year + 1900, tm->tm_mon + 1,
+			tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,data);
 
 	fwrite(buf, strlen(buf), 1, f);
 
