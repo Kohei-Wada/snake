@@ -31,6 +31,8 @@ static void ui_display(ui_t *ui)
 		}
 		printf("\n");
 	}
+
+	printf("your length is %d\n", snake_len(ui->g->snake));
 }
 
 
