@@ -149,6 +149,7 @@ static void game_update(game_t *g)
 
 		case 'p' :
 			g->pause = !g->pause;
+			break;
 
 		case 'a' : 
 			if (vx != 1) 

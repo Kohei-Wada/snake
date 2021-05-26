@@ -17,6 +17,7 @@ void usage()
 	printf("   d : down\n");
 	printf("   a : left\n");
 	printf("   q : quit\n");
+	printf("   p : pause\n");
 	exit(0);
 }
 
