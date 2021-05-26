@@ -16,6 +16,7 @@ typedef struct game {
 	int stage_hgt;
 	snake_t *snake;
 	pthread_mutex_t mutex;
+	int pause;
 } game_t;
 
 

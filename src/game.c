@@ -63,6 +63,7 @@ int game_init(game_t **g, int wid, int hgt)
 	(*g)->stage_hgt = hgt;
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
+	(*g)->pause     = 0;
 
 
 	if (!(*g)->stage || !(*g)->stage_cpy)
@@ -105,6 +106,7 @@ static void game_plot_snake(game_t *g)
 }
 
 
+
 static void game_update(game_t *g)
 {
 
@@ -117,22 +119,24 @@ static void game_update(game_t *g)
 	tmpy = head->y + vy;
 
 	//check if snake is dead
-	switch (g->stage[tmpx][tmpy]) {
-	case WALL_H:
-	case WALL_V:
-	case SNAKE :
-		g->active = 0;//dead
-		break;
+	if (!g->pause) {
+		switch (g->stage[tmpx][tmpy]) {
+		case WALL_H:
+		case WALL_V:
+		case SNAKE :
+			g->active = 0;//dead
+			break;
 
-	case FIELD : 
-		snake_update(g->snake);
-		break;
+		case FIELD : 
+			snake_update(g->snake);
+			break;
 
-	case FOOD: 
-		g->stage_cpy[tmpx][tmpy] = FIELD;
-		snake_add(g->snake, tmpx, tmpy);
-		game_set_food(g);
-		break;
+		case FOOD: 
+			g->stage_cpy[tmpx][tmpy] = FIELD;
+			snake_add(g->snake, tmpx, tmpy);
+			game_set_food(g);
+			break;
+		}
 	}
 
 
@@ -142,6 +146,9 @@ static void game_update(game_t *g)
 		case 'q' : 
 			g->active = 0; 
 			break;
+
+		case 'p' :
+			g->pause = !g->pause;
 
 		case 'a' : 
 			if (vx != 1) 

@@ -18,6 +18,7 @@ typedef struct ui {
 
 static void ui_display(ui_t *ui)
 {
+	game_t *g = ui->g;
 
 	for (int y = 0; y < ui->stage_hgt; ++y) {
 		for (int x = 0; x < ui->stage_wid; ++x) {
@@ -32,7 +33,10 @@ static void ui_display(ui_t *ui)
 		printf("\n");
 	}
 
-	printf("your length is %d\n", snake_len(ui->g->snake));
+	if (g->pause)
+		printf("pause\n");
+	else 
+		printf("your length is %d\n", snake_len(g->snake));
 }
 
 
