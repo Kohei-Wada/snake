@@ -233,10 +233,12 @@ static void save_result(int data)
 void game_result(game_t *g)
 {
 	int len = snake_len(g->snake);
+	system("clear");
+
+	printf("game over...\n");
+	printf("your length is %d\n", len);
 
 	save_result(len);
-	
-	printf("your length is %d\n",len); 
 }
 
 
