@@ -42,6 +42,16 @@ static char **stage_init(int wid, int hgt)
 }
 
 
+static void stage_free(char **stage, int wid)
+{
+	for (int i = 0; i < wid; ++i)
+		free(stage[i]);
+
+	free(stage);
+}
+
+
+
 void game_set_snake(game_t *g, snake_t *s)
 {
 	g->snake = s;
@@ -181,6 +191,8 @@ static void game_update(game_t *g)
 
 void game_free(game_t *g)
 {
+	stage_free(g->stage, g->stage_wid);
+	stage_free(g->stage_cpy, g->stage_wid);
 	pthread_mutex_destroy(&g->mutex);
 	free(g);
 }
