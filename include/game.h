@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include "snake.h"
 #include "list.h"
+#include "ui.h"
 
 enum {FIELD, WALL_H, WALL_V, SNAKE, FOOD};
 

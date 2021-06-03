@@ -74,7 +74,7 @@ int game_init(game_t **g, int wid, int hgt)
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
 	(*g)->pause     = 0;
-
+	
 
 	if (!(*g)->stage || !(*g)->stage_cpy)
 		return 1;

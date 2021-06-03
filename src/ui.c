@@ -9,6 +9,7 @@
 
 typedef struct ui {
 	game_t *g;
+	pthread_t handle;
 	char **stage;
 	int stage_wid;
 	int stage_hgt;
@@ -90,9 +91,8 @@ void *ui_loop(void *v)
 
 void ui_start(ui_t *ui)
 {
-	pthread_t handle;
-	pthread_create(&handle, NULL, ui_loop, ui);
-	pthread_detach(handle);
+	pthread_create(&ui->handle, NULL, ui_loop, ui);
+//	pthread_detach(ui->handle);
 }
 
 
