@@ -11,7 +11,6 @@
 #include "game.h"
 
 
-
 static void game_set_food(game_t *g)
 {
 	char **stage = g->stage_cpy;
@@ -55,6 +54,11 @@ static void stage_free(char **stage, int wid)
 void game_set_snake(game_t *g, snake_t *s)
 {
 	g->snake = s;
+}
+
+void game_set_ui(game_t *g, ui_t *ui)
+{
+	g->ui = ui;
 }
 
 
@@ -155,6 +159,7 @@ static void game_update(game_t *g)
 		switch (*g->buf) {
 		case 'q' : 
 			g->active = 0; 
+			ui_stop(g->ui);
 			break;
 
 		case 'p' :
@@ -220,7 +225,6 @@ void game_key_add(game_t *g, char key)
 		pthread_mutex_unlock(&g->mutex);
 	}
 }
-
 
 
 static void save_result(int data)

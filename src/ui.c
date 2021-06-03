@@ -5,17 +5,7 @@
 
 #include "getch.h"
 #include "game.h"
-
-
-typedef struct ui {
-	game_t *g;
-	pthread_t handle;
-	char **stage;
-	int stage_wid;
-	int stage_hgt;
-	int active;
-} ui_t;
-
+#include "ui.h"
 
 static void ui_display(ui_t *ui)
 {
@@ -56,6 +46,7 @@ int ui_init(ui_t **ui, game_t *g)
 	(*ui)->stage = game_get_stage(g);
 
 	game_stage_size(g, &(*ui)->stage_wid, &(*ui)->stage_hgt);
+	game_set_ui(g, *ui);
 
 	return 0;
 }
@@ -80,13 +71,18 @@ void *ui_loop(void *v)
 		if (kbhit()) {
 			char key = getch();
 			game_key_add(ui->g, key);
-			if (key == 'q') ui->active = 0;
 		}
 		usleep(70000);
 	}
 
 	return NULL;
 }
+
+void ui_stop(ui_t *ui)
+{
+	ui->active = 0;
+}
+
 
 
 void ui_start(ui_t *ui)
