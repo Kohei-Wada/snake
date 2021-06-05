@@ -253,7 +253,6 @@ static void save_result(int data)
 
 
 
-
 void game_result(game_t *g)
 {
 	int len = snake_len(g->snake);

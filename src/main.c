@@ -10,7 +10,6 @@
 
 void usage() 
 {
-	printf("[Usage] snake game\n");
 	printf("[Operations]\n");
   	printf("   f : right\n");
    	printf("   e : up\n");

@@ -88,7 +88,7 @@ void ui_stop(ui_t *ui)
 void ui_start(ui_t *ui)
 {
 	pthread_create(&ui->handle, NULL, ui_loop, ui);
-//	pthread_detach(ui->handle);
+	pthread_detach(ui->handle);
 }
 
 
