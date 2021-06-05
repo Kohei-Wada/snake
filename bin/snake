@@ -18,7 +18,7 @@ usage () {
 
 show_history () {
 	echo [History]
-	cat $snakedir/data
+	cat $snakedir/data | column -t -s , 
 	exit 0
 }
 
