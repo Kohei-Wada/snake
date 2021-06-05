@@ -11,17 +11,26 @@ git clone https://github.com/Kohei-Wada/snake.git
 ```
 
 
-2.compile and generate a binary:
+2.Building:
 
 ```sh
 cd snake
 make 
 make install
-./bin/snake
-
 ```
 
-## contribute
+to run
+```sh
+./bin/snake
+```
+
+to clean up
+
+```sh
+make clean
+```
+
+## contribution
 
 1.Please file an issue.
 
