@@ -30,7 +30,7 @@ to clean up
 make clean
 ```
 
-## contribution
+## Contribution
 
 1.Please file an issue.
 
