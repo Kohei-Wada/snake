@@ -11,7 +11,13 @@ usage () {
 	echo 	-H    show history
 	echo 	-r    show ranking
 	echo " "
-	$snakedir/main -h
+	echo [Operations]
+	echo	a : left 	
+	echo 	f : right	
+	echo 	e : up	
+	echo 	d : down
+	echo 	q : quit
+	echo 	p : pause
 	exit 0
 }
 
