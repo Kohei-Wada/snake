@@ -25,7 +25,7 @@ static void ui_display(ui_t *ui)
 	}
 
 	if (g->pause)
-		printf("pause\n");
+		printf("pause : press 'p' to continue\n");
 	else 
 		printf("your length is %d\n", snake_len(g->snake));
 }
