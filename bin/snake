@@ -5,6 +5,7 @@ snakedir=~/.snake/
 n_ranking=5
 
 usage () {
+	echo "snake"
 	echo "[Usage] snake [-h | -H | -r ]" 
 	echo "[Flags]"
 	echo 	-h    show this help
