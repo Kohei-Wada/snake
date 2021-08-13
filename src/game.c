@@ -40,7 +40,6 @@ static char **stage_init(int wid, int hgt)
 	return stage;
 }
 
-
 static void stage_free(char **stage, int wid)
 {
 	for (int i = 0; i < wid; ++i)
@@ -48,8 +47,6 @@ static void stage_free(char **stage, int wid)
 
 	free(stage);
 }
-
-
 
 void game_set_snake(game_t *g, snake_t *s)
 {
@@ -65,6 +62,8 @@ void game_set_ui(game_t *g, ui_t *ui)
 int game_init(game_t **g, int wid, int hgt) 
 {
 	int ret;
+	int foods = 10;
+
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) {
 		perror("malloc"); 
@@ -83,7 +82,7 @@ int game_init(game_t **g, int wid, int hgt)
 	if (!(*g)->stage || !(*g)->stage_cpy)
 		return 1;
 
-	game_set_foods(*g, 10);
+	game_set_foods(*g, foods);
 
 	ret = pthread_mutex_init(&(*g)->mutex, NULL);
 	if (ret) {
