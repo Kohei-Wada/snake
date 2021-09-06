@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <time.h>
 
 
@@ -17,12 +16,14 @@ static void game_set_food(game_t *g)
 	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
 }
 
+
 static void game_set_foods(game_t *g, int n)
 {
 	srand(time(NULL));
 	for (int i = 0; i < n; ++i)
 		game_set_food(g);
 }
+
 
 static char **stage_init(int wid, int hgt)
 {
@@ -40,6 +41,8 @@ static char **stage_init(int wid, int hgt)
 	return stage;
 }
 
+
+
 static void stage_free(char **stage, int wid)
 {
 	for (int i = 0; i < wid; ++i)
@@ -48,10 +51,12 @@ static void stage_free(char **stage, int wid)
 	free(stage);
 }
 
+
 void game_set_snake(game_t *g, snake_t *s)
 {
 	g->snake = s;
 }
+
 
 void game_set_ui(game_t *g, ui_t *ui)
 {
@@ -61,7 +66,6 @@ void game_set_ui(game_t *g, ui_t *ui)
 
 int game_init(game_t **g, int wid, int hgt) 
 {
-	int ret;
 	int foods = 10;
 
 	*g = malloc(sizeof(game_t));
@@ -84,13 +88,7 @@ int game_init(game_t **g, int wid, int hgt)
 
 	game_set_foods(*g, foods);
 
-	ret = pthread_mutex_init(&(*g)->mutex, NULL);
-	if (ret) {
-		perror("mutex_init");
-		return 1;
-	}
-
-	return ret;
+	return 0;
 }
 
 
@@ -187,17 +185,15 @@ static void game_update(game_t *g)
 		}
 
 		//clear key buf
-		pthread_mutex_lock(&g->mutex);
 		*g->buf = 0;
-		pthread_mutex_unlock(&g->mutex);
 	}
 }
+
 
 void game_free(game_t *g)
 {
 	stage_free(g->stage, g->stage_wid);
 	stage_free(g->stage_cpy, g->stage_wid);
-	pthread_mutex_destroy(&g->mutex);
 	free(g);
 }
 
@@ -210,6 +206,7 @@ void game_loop(game_t *g)
 	}
 }
 
+
 char **game_get_stage(game_t *g)
 {
 	return g->stage;
@@ -219,9 +216,7 @@ char **game_get_stage(game_t *g)
 void game_key_add(game_t *g, char key) 
 {
 	if (*g->buf == 0) {
-		pthread_mutex_lock(&g->mutex);
 		*g->buf = key;
-		pthread_mutex_unlock(&g->mutex);
 	}
 }
 

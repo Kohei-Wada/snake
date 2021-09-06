@@ -8,7 +8,6 @@
 #include "ui.h"
 
 
-
 static void ui_set_active(ui_t *ui, int active)
 {
 	ui->active = active;
@@ -32,8 +31,6 @@ void ui_set_stage(ui_t *ui,  char **s)
 	ui->stage = s;
 }
 
-
-	
 
 
 static void ui_display(ui_t *ui)
@@ -91,19 +88,29 @@ void ui_free(ui_t *ui)
 }
 
 
+void ui_update(ui_t *ui)
+{
+	system("clear");
+	ui_display(ui);
+
+	if (kbhit()) {
+		char key = getch();
+		game_key_add(ui->g, key);
+	}
+
+}
+
+
+
+
+
 void *ui_loop(void *v)
 {
 	ui_t *ui = v;
 	ui_set_active(ui, 1);
 
 	while (ui->active) {
-		system("clear");
-		ui_display(ui);
-	
-		if (kbhit()) {
-			char key = getch();
-			game_key_add(ui->g, key);
-		}
+		ui_update(ui);
 		usleep(70000);
 	}
 
