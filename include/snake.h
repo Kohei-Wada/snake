@@ -1,5 +1,5 @@
-#ifndef _SNAKE_H_
-#define _SNAKE_H_
+#ifndef SNAKE_H
+#define SNAKE_H
 
 
 typedef struct game game_t;
@@ -8,6 +8,13 @@ typedef struct snake snake_t;
 typedef struct position {
 	int x, y;
 } pos_t;
+
+
+int snake_get_vx(snake_t *s);
+void snake_set_vx(snake_t *s, int v);
+int snake_get_vy(snake_t *s);
+void snake_set_vy(snake_t *s, int v);
+
 
 int snake_init(snake_t **s, game_t *g, int x, int y);
 void snake_free(snake_t *s);

@@ -1,5 +1,5 @@
-#ifndef _GETCH_H_
-#define _GETCH_H_
+#ifndef GETCH_H
+#define GETCH_H
 
 void open_termios(void);
 void close_termios(void);

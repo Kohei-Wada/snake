@@ -9,8 +9,68 @@
 typedef struct snake {
 	list_t *l;
 	int len;
-	int vx, vy;
+	int vx;
+	int vy;
 } snake_t;
+
+
+pos_t *snake_get_pos(snake_t *s, int index)
+{
+	return list_get(s->l, index);
+}
+
+
+int snake_len(snake_t *s)
+{
+	return s->len;
+}
+
+
+void snake_set_len(snake_t *s, int l)
+{
+	s->len = l;
+}
+
+
+int snake_get_vx(snake_t *s)
+{
+	return s->vx;
+}
+
+
+void snake_set_vx(snake_t *s, int v)
+{
+	s->vx = v;
+}
+
+
+int snake_get_vy(snake_t *s)
+{
+	return s->vy;
+}
+
+
+void snake_set_vy(snake_t *s, int v)
+{
+	s->vy = v;
+}
+
+
+void snake_set_v(snake_t *s, int vx, int vy)
+{
+	s->vx = vx;
+	s->vy = vy;
+}
+
+
+void snake_add(snake_t *s, int x, int y)
+{
+	pos_t *p = malloc(sizeof(pos_t));
+	
+	p->x = x; p->y = y;
+	list_add_head(s->l, p);
+	++s->len;
+}
 
 
 void snake_update(snake_t *s)
@@ -29,42 +89,24 @@ void snake_update(snake_t *s)
 }
 
 
-void snake_set_v(snake_t *s, int vx, int vy)
-{
-	s->vx = vx;
-	s->vy = vy;
-}
-
-void snake_get_v(snake_t *s, int *vx, int *vy)
-{
-	*vx = s->vx; 
-	*vy = s->vy;
-}
-
-
 int snake_init(snake_t **s, game_t *g, int x, int y) 
 {
-	int ret;
-
 	*s = malloc(sizeof(snake_t));
 	if (!(*s)) {
 		perror("malloc");
 		return 1;
 	}
 
-	(*s)->len = 0;
-	(*s)->vx = 1;
-	(*s)->vy = 0;
+	snake_set_len(*s, 0);
+	snake_set_vx(*s, 1);
+	snake_set_vy(*s, 0);
 
-	ret = list_init(&(*s)->l);
-	if (ret) {
+	if (list_init(&(*s)->l)) {
 		perror("list_init");
 		return 1;
 	}
 
 	snake_add(*s, x, y);
-	game_set_snake(g, *s);
-
 	return 0;
 
 }
@@ -76,30 +118,10 @@ void snake_free(snake_t *s)
 		pos_t *p = list_get(s->l, i); 
 		free(p);
 	}
+
 	list_free(s->l);
 	free(s);
 }
 
-
-pos_t *snake_get_pos(snake_t *s, int index)
-{
-	return list_get(s->l, index);
-}
-
-
-int snake_len(snake_t *s)
-{
-	return s->len;
-}
-
-
-void snake_add(snake_t *s, int x, int y)
-{
-	pos_t *p = malloc(sizeof(pos_t));
-	
-	p->x = x; p->y = y;
-	list_add_head(s->l, p);
-	++s->len;
-}
 
 

@@ -2,40 +2,57 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "game.h"
-#include "ui.h"
-#include "snake.h"
 
 
-int main(void)
+void usage(void)
 {
+	printf("[Usage] snake [-h]\n");
+	printf("[Flags]\n");
+	printf("-h    show this help\n");
+	printf("\n");
+
+	printf("[Operations]\n");
+	printf("a : left\n"); 	
+	printf("f : right\n");
+	printf("e : up\n");	
+	printf("d : down\n");
+	printf("q : quit\n");
+	printf("p : pause\n");
+
+	exit(0);
+}
+
+
+int main(int argc, char **argv)
+{
+
+	game_t *g;
+
+	int opt;
+	while ((opt = getopt(argc, argv, "h")) != -1) {
+		switch (opt) {
+		case 'h': usage(); break;
+		default : usage(); break;
+		}
+	}
 
 	struct winsize size;
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
 
-	game_t *g;
-	snake_t *s;
-	ui_t *ui;
 
 	if (game_init(&g, size.ws_col, size.ws_row - 2))
 		goto fail;
-	if (ui_init(&ui, g)) 
-		goto fail;
-	if (snake_init(&s, g, size.ws_col/2, size.ws_row /2)) 
-		goto fail;
 
-	ui_start(ui);
 	game_loop(g);
 	game_result(g);
 
 
   fail:
-	snake_free(s);
-	ui_free(ui);
 	game_free(g);
-
 	return 0;
 }
 

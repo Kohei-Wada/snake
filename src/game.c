@@ -3,26 +3,27 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <time.h>
 
-
-#include "snake.h"
 #include "game.h"
 
 
-static void game_set_food(game_t *g)
-{
-	char **stage = g->stage_cpy;
-	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
-}
+typedef struct game {
+	char     *key_buf;
+	ui_t     *ui;        //ui object
+	snake_t  *snake;     //snake object
+	char    **stage;
+	char    **stage_cpy;
+	int       stage_wid;
+	int       stage_hgt;
+	int       pause;
+	int       active;
+	int       nfoods;
+} game_t;
 
-static void game_set_foods(game_t *g, int n)
-{
-	srand(time(NULL));
-	for (int i = 0; i < n; ++i)
-		game_set_food(g);
-}
+
+/******************************************************************/
+
 
 static char **stage_init(int wid, int hgt)
 {
@@ -40,6 +41,7 @@ static char **stage_init(int wid, int hgt)
 	return stage;
 }
 
+
 static void stage_free(char **stage, int wid)
 {
 	for (int i = 0; i < wid; ++i)
@@ -48,10 +50,21 @@ static void stage_free(char **stage, int wid)
 	free(stage);
 }
 
-void game_set_snake(game_t *g, snake_t *s)
+
+/******************************************************************/
+
+
+char game_get_key(game_t *g)
 {
-	g->snake = s;
+	return *g->key_buf;
 }
+
+
+void game_set_key(game_t *g, char key) 
+{
+	*g->key_buf = key;
+}
+
 
 void game_set_ui(game_t *g, ui_t *ui)
 {
@@ -59,38 +72,96 @@ void game_set_ui(game_t *g, ui_t *ui)
 }
 
 
-int game_init(game_t **g, int wid, int hgt) 
+ui_t *game_get_ui(game_t *g)
 {
-	int ret;
-	int foods = 10;
+	return g->ui;
+}
 
-	*g = malloc(sizeof(game_t));
-	if (!(*g)) {
-		perror("malloc"); 
-		return 1;
-	}
 
-	(*g)->buf       = malloc(sizeof(char));
-	(*g)->active    = 1;
-	(*g)->stage_wid = wid;
-	(*g)->stage_hgt = hgt;
-	(*g)->stage     = stage_init(wid, hgt);
-	(*g)->stage_cpy = stage_init(wid, hgt);
-	(*g)->pause     = 0;
-	
+snake_t *game_get_snake(game_t *g)
+{
+	return g->snake;
+}
 
-	if (!(*g)->stage || !(*g)->stage_cpy)
-		return 1;
 
-	game_set_foods(*g, foods);
+void game_set_snake(game_t *g, snake_t *s)
+{
+	g->snake = s;
+}
 
-	ret = pthread_mutex_init(&(*g)->mutex, NULL);
-	if (ret) {
-		perror("mutex_init");
-		return 1;
-	}
 
-	return ret;
+static char **game_get_stage_cpy(game_t *g)
+{
+	return g->stage_cpy;
+}
+
+
+char **game_get_stage(game_t *g)
+{
+	return g->stage;
+}
+
+
+void game_set_stage_wid(game_t *g, int wid)
+{
+	g->stage_wid = wid;
+}
+
+
+void game_set_stage_hgt(game_t *g, int hgt)
+{
+	g->stage_hgt = hgt;
+}
+
+
+void game_set_active(game_t *g, int a)
+{
+	g->active = a;
+}
+
+
+int game_get_active(game_t *g)
+{
+	return g->active;
+}
+
+
+int game_get_pause(game_t *g)
+{
+	return g->pause;
+}
+
+
+void game_set_pause(game_t *g, int p)
+{
+	g->pause = p;
+}
+
+
+int game_get_nfoods(game_t *g)
+{
+	return g->nfoods;
+}
+
+
+void game_set_nfoods(game_t *g, int n)
+{
+	g->nfoods = n;
+}
+
+
+static void game_set_food(game_t *g)
+{
+	char **stage = g->stage_cpy;
+	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
+}
+
+
+static void game_set_foods(game_t *g)
+{
+	srand(time(NULL));
+	for (int i = 0; i < game_get_nfoods(g) ; ++i)
+		game_set_food(g);
 }
 
 
@@ -103,9 +174,9 @@ void game_stage_size(game_t *g, int *wid, int *hgt)
 
 static void game_plot_snake(game_t *g)
 {
-	char **stage = g->stage;
-	char **cpy   = g->stage_cpy;
-	snake_t *s   = g->snake;
+	char **stage = game_get_stage(g);
+	char **cpy   = game_get_stage_cpy(g);
+	snake_t *s   = game_get_snake(g);
 
 	for (int i = 0; i < g->stage_wid; ++i) {
 		memcpy(stage[i], cpy[i], sizeof(char) * g->stage_hgt);
@@ -119,17 +190,21 @@ static void game_plot_snake(game_t *g)
 }
 
 
-
 static void game_update(game_t *g)
 {
 
-	game_plot_snake(g);
-	int tmpx, tmpy, vx, vy;
-	pos_t *head = snake_get_pos(g->snake, 0);
-	snake_get_v(g->snake, &vx, &vy);
+	snake_t *s = game_get_snake(g);
+	ui_t *ui = game_get_ui(g);
 
-	tmpx = head->x + vx; 
-	tmpy = head->y + vy;
+	game_plot_snake(g);
+	ui_update(ui);
+
+	int vx = snake_get_vx(s);
+	int vy = snake_get_vy(s);
+
+	pos_t *head = snake_get_pos(s, 0);
+	int tmpx = head->x + vx; 
+	int tmpy = head->y + vy;
 
 	//check if snake is dead
 	if (!g->pause) {
@@ -153,52 +228,38 @@ static void game_update(game_t *g)
 	}
 
 
-	//update snake v
-	if (*g->buf) {
-		switch (*g->buf) {
-		case 'q' : 
-			g->active = 0; 
-			ui_stop(g->ui);
-			break;
+	switch (game_get_key(g)) {
+	case 'q' : 
+		game_set_active(g, 0);
+		break;
 
-		case 'p' :
-			g->pause = !g->pause;
-			break;
+	case 'p' :
+		game_set_pause(g, !game_get_pause(g));
+		break;
 
-		case 'a' : 
-			if (vx != 1) 
-				snake_set_v(g->snake, -1, 0); 
-			break;
+	case 'a' : 
+		if (vx != 1) 
+			snake_set_v(g->snake, -1, 0); 
+		break;
 
-		case 'f' : 
-			if (vx != -1)
-				snake_set_v(g->snake, 1 , 0); 
-			break;
+	case 'f' : 
+		if (vx != -1)
+			snake_set_v(g->snake, 1 , 0); 
+		break;
 
-		case 'e' : 
-			if (vy != 1)
-				snake_set_v(g->snake, 0, -1); 
-			break; 
+	case 'e' : 
+		if (vy != 1)
+			snake_set_v(g->snake, 0, -1); 
+		break; 
 
-		case 'd' : 
-			if (vy != -1)
-				snake_set_v(g->snake, 0, 1); 
-			break;
-		}
-
-		//clear key buf
-		pthread_mutex_lock(&g->mutex);
-		*g->buf = 0;
-		pthread_mutex_unlock(&g->mutex);
+	case 'd' : 
+		if (vy != -1)
+			snake_set_v(g->snake, 0, 1); 
+		break;
 	}
-}
 
-void game_free(game_t *g)
-{
-	stage_free(g->stage, g->stage_wid);
-	stage_free(g->stage_cpy, g->stage_wid);
-	pthread_mutex_destroy(&g->mutex);
-	free(g);
+	//clear key buffer
+	game_set_key(g, 0);
 }
 
 
@@ -207,21 +268,6 @@ void game_loop(game_t *g)
 	while (g->active) {
 		game_update(g);
 		usleep(70000);
-	}
-}
-
-char **game_get_stage(game_t *g)
-{
-	return g->stage;
-}
-
-
-void game_key_add(game_t *g, char key) 
-{
-	if (*g->buf == 0) {
-		pthread_mutex_lock(&g->mutex);
-		*g->buf = key;
-		pthread_mutex_unlock(&g->mutex);
 	}
 }
 
@@ -251,16 +297,60 @@ static void save_result(int data)
 }
 
 
-
 void game_result(game_t *g)
 {
 	int len = snake_len(g->snake);
+
 	system("clear");
 
 	printf("game over...\n");
 	printf("your length is %d\n", len);
-
 	save_result(len);
+}
+
+
+int game_init(game_t **g, int wid, int hgt) 
+{
+
+	*g = malloc(sizeof(game_t));
+	if (!(*g)) {
+		perror("malloc"); 
+		return 1;
+	}
+
+	(*g)->stage     = stage_init(wid, hgt);
+	(*g)->stage_cpy = stage_init(wid, hgt);
+	(*g)->key_buf   = malloc(sizeof(char));
+
+	game_set_active(*g, 1);
+	game_set_pause(*g, 0);
+	game_set_stage_wid(*g, wid);
+	game_set_stage_hgt(*g, hgt);
+	game_set_nfoods(*g, 10);
+
+
+	snake_init(&(*g)->snake, *g, wid / 2, hgt / 2);
+	ui_init(&(*g)->ui, *g);
+
+	if (!(*g)->stage || !(*g)->stage_cpy)
+		return 1;
+
+	game_set_foods(*g);
+
+	return 0;
+}
+
+
+void game_free(game_t *g)
+{
+	stage_free(g->stage, g->stage_wid);
+	stage_free(g->stage_cpy, g->stage_wid);
+
+	free(g->key_buf);
+	snake_free(g->snake);
+	ui_free(g->ui);
+
+	free(g);
 }
 
 

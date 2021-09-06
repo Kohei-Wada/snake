@@ -1,8 +1,8 @@
 OBJECTS = main.o game.o list.o ui.o getch.o snake.o
 CFLAGS = -g -Wall 
-LDLIBS = -pthread 
+LDLIBS = #-pthread 
 INCLUDE = -I include 
-TARGET = main
+TARGET = snake
 SOURCES = $(OBJECTS: %c = %o)
 
 LIBDIR = lib
@@ -40,4 +40,4 @@ install:
 
 clean :
 	rm -f bin/$(TARGET) $(OBJDIR)/*
-	rm -r ~/.snake
+	rm -fr ~/.snake
