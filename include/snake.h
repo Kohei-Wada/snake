@@ -9,6 +9,13 @@ typedef struct position {
 	int x, y;
 } pos_t;
 
+
+int snake_get_vx(snake_t *s);
+void snake_set_vx(snake_t *s, int v);
+int snake_get_vy(snake_t *s);
+void snake_set_vy(snake_t *s, int v);
+
+
 int snake_init(snake_t **s, game_t *g, int x, int y);
 void snake_free(snake_t *s);
 void snake_add(snake_t *s, int x, int y);

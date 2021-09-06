@@ -34,6 +34,18 @@ void game_set_key(game_t *g, char key)
 }
 
 
+void game_set_ui(game_t *g, ui_t *ui)
+{
+	g->ui = ui;
+}
+
+
+ui_t *game_get_ui(game_t *g)
+{
+	return g->ui;
+}
+
+
 int game_get_pause(game_t *g)
 {
 	return g->pause;
@@ -118,11 +130,6 @@ static void stage_free(char **stage, int wid)
 
 
 
-void game_set_ui(game_t *g, ui_t *ui)
-{
-	g->ui = ui;
-}
-
 
 void game_stage_size(game_t *g, int *wid, int *hgt)
 {
@@ -152,17 +159,20 @@ static void game_plot_snake(game_t *g)
 static void game_update(game_t *g)
 {
 
+	snake_t *s = game_get_snake(g);
+	ui_t *ui = game_get_ui(g);
+
 	game_plot_snake(g);
+	ui_update(ui);
+
+	int vx = snake_get_vx(s);
+	int vy = snake_get_vy(s);
 
 
-	int tmpx, tmpy, vx, vy;
-	pos_t *head = snake_get_pos(g->snake, 0);
-	snake_get_v(g->snake, &vx, &vy);
+	pos_t *head = snake_get_pos(s, 0);
+	int tmpx = head->x + vx; 
+	int tmpy = head->y + vy;
 
-	ui_update(g->ui);
-
-	tmpx = head->x + vx; 
-	tmpy = head->y + vy;
 
 	//check if snake is dead
 	if (!g->pause) {
@@ -184,7 +194,6 @@ static void game_update(game_t *g)
 			break;
 		}
 	}
-
 
 
 	/*XXX*/

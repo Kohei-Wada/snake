@@ -9,7 +9,8 @@
 typedef struct snake {
 	list_t *l;
 	int len;
-	int vx, vy;
+	int vx;
+	int vy;
 } snake_t;
 
 
@@ -27,6 +28,31 @@ void snake_update(snake_t *s)
 	current->x += s->vx;
 	current->y += s->vy;
 }
+
+
+int snake_get_vx(snake_t *s)
+{
+	return s->vx;
+}
+
+
+void snake_set_vx(snake_t *s, int v)
+{
+	s->vx = v;
+}
+
+
+int snake_get_vy(snake_t *s)
+{
+	return s->vy;
+}
+
+
+void snake_set_vy(snake_t *s, int v)
+{
+	s->vy = v;
+}
+
 
 
 void snake_set_v(snake_t *s, int vx, int vy)
