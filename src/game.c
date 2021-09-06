@@ -25,6 +25,20 @@ static void game_set_foods(game_t *g, int n)
 }
 
 
+static char **game_get_stage_cpy(game_t *g)
+{
+	return g->stage_cpy;
+}
+
+
+
+static snake_t *game_get_snake(game_t *g)
+{
+	return g->snake;
+}
+
+
+
 static char **stage_init(int wid, int hgt)
 {
 	char **stage = malloc(sizeof(char *) * wid);
@@ -101,9 +115,9 @@ void game_stage_size(game_t *g, int *wid, int *hgt)
 
 static void game_plot_snake(game_t *g)
 {
-	char **stage = g->stage;
-	char **cpy   = g->stage_cpy;
-	snake_t *s   = g->snake;
+	char **stage = game_get_stage(g);
+	char **cpy   = game_get_stage_cpy(g);
+	snake_t *s   = game_get_snake(g);
 
 	for (int i = 0; i < g->stage_wid; ++i) {
 		memcpy(stage[i], cpy[i], sizeof(char) * g->stage_hgt);
@@ -117,6 +131,11 @@ static void game_plot_snake(game_t *g)
 }
 
 
+char game_get_key(game_t *g)
+{
+	return *g->buf;
+}
+
 
 static void game_update(game_t *g)
 {
@@ -127,6 +146,7 @@ static void game_update(game_t *g)
 	snake_get_v(g->snake, &vx, &vy);
 
 	ui_update(g->ui);
+
 	tmpx = head->x + vx; 
 	tmpy = head->y + vy;
 
@@ -153,7 +173,7 @@ static void game_update(game_t *g)
 
 
 	//update snake v
-	if (*g->buf) {
+	if (game_get_key(g)) {
 		switch (*g->buf) {
 		case 'q' : 
 			g->active = 0; 
@@ -212,6 +232,8 @@ char **game_get_stage(game_t *g)
 {
 	return g->stage;
 }
+
+
 
 
 void game_key_add(game_t *g, char key) 
