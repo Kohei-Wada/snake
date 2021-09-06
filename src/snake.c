@@ -107,7 +107,6 @@ int snake_init(snake_t **s, game_t *g, int x, int y)
 	return 0;
 
 
-
   error1:
 	free(*s);
 

@@ -13,7 +13,7 @@ typedef struct game {
 	ui_t     *ui;        //ui object
 	snake_t  *snake;     //snake object
 	char    **stage;
-	char    **stage_cpy;
+	char    **stage_cpy; 
 	int       stage_wid;
 	int       stage_hgt;
 	int       pause;
@@ -125,6 +125,7 @@ int game_get_stage_hgt(game_t *g)
 	return g->stage_hgt;
 }
 
+
 void game_set_active(game_t *g, int a)
 {
 	g->active = a;
@@ -176,25 +177,16 @@ static void game_set_foods(game_t *g)
 }
 
 
-void game_stage_size(game_t *g, int *wid, int *hgt)
+static void game_plot_snake(game_t *g, snake_t *s)
 {
-	*wid = g->stage_wid;
-	*hgt = g->stage_hgt;
-}
+	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
+	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
 
+	for (i = 0; i < wid; ++i) 
+		memcpy(stage[i], cpy[i], sizeof(char) * hgt);
 
-static void game_plot_snake(game_t *g)
-{
-	char **stage = game_get_stage(g);
-	char **cpy   = game_get_stage_cpy(g);
-	snake_t *s   = game_get_snake(g);
-
-	for (int i = 0; i < g->stage_wid; ++i) {
-		memcpy(stage[i], cpy[i], sizeof(char) * g->stage_hgt);
-	}
-
-	for (int i = 0; i < snake_len(s); ++i) {
-		pos_t *pos;
+	pos_t *pos;
+	for (i = 0; i < snake_len(s); ++i) {
 		pos = snake_get_pos(s, i);
 		stage[pos->x][pos->y] = SNAKE;
 	}
@@ -207,7 +199,7 @@ static void game_update(game_t *g)
 	snake_t *s = game_get_snake(g);
 	ui_t *ui = game_get_ui(g);
 
-	game_plot_snake(g);
+	game_plot_snake(g, s);
 	ui_update(ui);
 
 	int vx = snake_get_vx(s);
@@ -223,7 +215,7 @@ static void game_update(game_t *g)
 		case WALL_H:
 		case WALL_V:
 		case SNAKE :
-			g->active = 0;//dead
+			game_set_active(g, 0);
 			break;
 
 		case FIELD : 
@@ -285,13 +277,9 @@ void game_loop(game_t *g)
 
 void game_result(game_t *g)
 {
-	int len = snake_len(g->snake);
-
 	system("clear");
-
 	printf("game over...\n");
-	printf("your length is %d\n", len);
-
+	printf("your length is %d\n", snake_len(game_get_snake(g)));
 }
 
 
@@ -302,15 +290,12 @@ int game_init(game_t **g, int wid, int hgt)
 	if (!(*g)) 
 		goto error0;
 
-	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2)) 
-		goto error1;
-
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
 	(*g)->key_buf   = malloc(sizeof(char));
 
 	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
-		goto error2;
+		goto error1;
 
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
@@ -320,6 +305,9 @@ int game_init(game_t **g, int wid, int hgt)
 	game_set_foods(*g);
 
 
+	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2)) 
+		goto error2;
+		
 	if (ui_init(&(*g)->ui, *g)) 
 		goto error3;
 
@@ -329,14 +317,14 @@ int game_init(game_t **g, int wid, int hgt)
 
   error3:
 	ui_free((*g)->ui);
-
   error2:
+	snake_free((*g)->snake);
+
+  error1:
 	free((*g)->stage);
 	free((*g)->stage_cpy);
 	free((*g)->key_buf);
 
-  error1:
-	snake_free((*g)->snake);
 
   error0:
 	free(*g);
