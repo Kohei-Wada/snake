@@ -86,28 +86,33 @@ void snake_update(snake_t *s)
 	current = list_get(s->l, 0);
 	current->x += s->vx;
 	current->y += s->vy;
+
 }
 
 
 int snake_init(snake_t **s, game_t *g, int x, int y) 
 {
 	*s = malloc(sizeof(snake_t));
-	if (!(*s)) {
-		perror("malloc");
-		return 1;
-	}
+	if (!(*s)) 
+		goto error0;
 
 	snake_set_len(*s, 0);
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
 
-	if (list_init(&(*s)->l)) {
-		perror("list_init");
-		return 1;
-	}
+	if (list_init(&(*s)->l)) 
+		goto error1;
 
 	snake_add(*s, x, y);
 	return 0;
+
+
+
+  error1:
+	free(*s);
+
+  error0:
+	return 1;
 
 }
 

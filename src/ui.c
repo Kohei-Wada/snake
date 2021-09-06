@@ -44,7 +44,7 @@ static void ui_display(ui_t *ui)
 			case WALL_H: printf("="); break;
 			case WALL_V: printf("|"); break;
 			case FIELD: printf(" "); break;
-			case SNAKE:printf("\e[32m+\e[0m"); break;
+			case SNAKE:printf("\e[32mo\e[0m"); break;
 			case FOOD: printf("\e[31m@\e[0m");
 			}
 		}
@@ -85,7 +85,8 @@ int ui_init(ui_t **ui, game_t *g)
 
 	ui_set_stage((*ui), stage);
 
-	game_stage_size(g, &(*ui)->stage_wid, &(*ui)->stage_hgt);
+	(*ui)->stage_wid = game_get_stage_wid(g);
+	(*ui)->stage_hgt = game_get_stage_hgt(g);
 	game_set_ui(g, *ui);
 
 	open_termios();

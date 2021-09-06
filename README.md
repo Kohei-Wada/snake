@@ -16,7 +16,6 @@ git clone https://github.com/Kohei-Wada/snake.git
 ```sh
 cd snake
 make 
-make install
 ```
 
 to run

@@ -108,11 +108,22 @@ void game_set_stage_wid(game_t *g, int wid)
 }
 
 
+int game_get_stage_wid(game_t *g)
+{
+	return g->stage_wid;
+}
+
+
 void game_set_stage_hgt(game_t *g, int hgt)
 {
 	g->stage_hgt = hgt;
 }
 
+
+int game_get_stage_hgt(game_t *g)
+{
+	return g->stage_hgt;
+}
 
 void game_set_active(game_t *g, int a)
 {
@@ -265,35 +276,10 @@ static void game_update(game_t *g)
 
 void game_loop(game_t *g)
 {
-	while (g->active) {
+	while (game_get_active(g)) {
 		game_update(g);
 		usleep(70000);
 	}
-}
-
-
-static void save_result(int data)
-{
-	char file[100];
-	char buf[100];
-
-	sprintf(file, "/home/%s/.snake/data", getlogin());
-
-	FILE *f = fopen(file, "a");
-	if (!f) return;
-
-	time_t t;
-	struct tm *tm;
-
-	t = time(NULL);
-	tm = localtime(&t);
-
-	sprintf(buf, "%d/%d/%d/%d/%d/%d,%d\n", tm->tm_year + 1900, tm->tm_mon + 1,
-			tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,data);
-
-	fwrite(buf, strlen(buf), 1, f);
-
-	fclose(f);
 }
 
 
@@ -305,7 +291,7 @@ void game_result(game_t *g)
 
 	printf("game over...\n");
 	printf("your length is %d\n", len);
-	save_result(len);
+
 }
 
 
@@ -313,31 +299,49 @@ int game_init(game_t **g, int wid, int hgt)
 {
 
 	*g = malloc(sizeof(game_t));
-	if (!(*g)) {
-		perror("malloc"); 
-		return 1;
-	}
+	if (!(*g)) 
+		goto error0;
+
+	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2)) 
+		goto error1;
 
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
 	(*g)->key_buf   = malloc(sizeof(char));
+
+	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
+		goto error2;
 
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
 	game_set_stage_wid(*g, wid);
 	game_set_stage_hgt(*g, hgt);
 	game_set_nfoods(*g, 10);
-
-
-	snake_init(&(*g)->snake, *g, wid / 2, hgt / 2);
-	ui_init(&(*g)->ui, *g);
-
-	if (!(*g)->stage || !(*g)->stage_cpy)
-		return 1;
-
 	game_set_foods(*g);
 
+
+	if (ui_init(&(*g)->ui, *g)) 
+		goto error3;
+
 	return 0;
+
+
+
+  error3:
+	ui_free((*g)->ui);
+
+  error2:
+	free((*g)->stage);
+	free((*g)->stage_cpy);
+	free((*g)->key_buf);
+
+  error1:
+	snake_free((*g)->snake);
+
+  error0:
+	free(*g);
+
+	return 1;
 }
 
 
@@ -352,6 +356,5 @@ void game_free(game_t *g)
 
 	free(g);
 }
-
 
 

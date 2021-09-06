@@ -45,13 +45,11 @@ int main(int argc, char **argv)
 
 
 	if (game_init(&g, size.ws_col, size.ws_row - 2))
-		goto fail;
+		return 1;
 
 	game_loop(g);
 	game_result(g);
 
-
-  fail:
 	game_free(g);
 	return 0;
 }

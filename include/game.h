@@ -9,6 +9,10 @@ typedef struct game game_t;
 
 enum {FIELD, WALL_H, WALL_V, SNAKE, FOOD};
 
+
+int game_get_stage_wid(game_t *g);
+int game_get_stage_hgt(game_t *g);
+
 int game_init(game_t **g, int wid, int hgt);
 void game_free(game_t *g);
 void game_loop(game_t *g);
