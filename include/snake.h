@@ -1,5 +1,5 @@
-#ifndef _SNAKE_H_
-#define _SNAKE_H_
+#ifndef SNAKE_H
+#define SNAKE_H
 
 
 typedef struct game game_t;

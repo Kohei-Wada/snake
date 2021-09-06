@@ -1,6 +1,5 @@
 #include <stdlib.h> 
 #include <stdio.h>
-#include <pthread.h>
 #include <unistd.h>
 
 #include "getch.h"
@@ -102,8 +101,6 @@ void ui_update(ui_t *ui)
 
 
 
-
-
 void *ui_loop(void *v)
 {
 	ui_t *ui = v;
@@ -123,12 +120,5 @@ void ui_stop(ui_t *ui)
 	ui_set_active(ui, 0);
 }
 
-
-
-void ui_start(ui_t *ui)
-{
-	pthread_create(&ui->handle, NULL, ui_loop, ui);
-	pthread_detach(ui->handle);
-}
 
 

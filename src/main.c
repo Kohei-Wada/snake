@@ -26,7 +26,6 @@ int main(void)
 	if (snake_init(&s, g, size.ws_col/2, size.ws_row /2)) 
 		goto fail;
 
-	ui_start(ui);
 	game_loop(g);
 	game_result(g);
 

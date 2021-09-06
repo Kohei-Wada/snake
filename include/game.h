@@ -1,7 +1,6 @@
-#ifndef _GAME_H_
-#define _GAME_H_
+#ifndef GAME_H
+#define GAME_H
 
-#include <pthread.h>
 #include "snake.h"
 #include "list.h"
 #include "ui.h"

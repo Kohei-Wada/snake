@@ -126,6 +126,7 @@ static void game_update(game_t *g)
 	pos_t *head = snake_get_pos(g->snake, 0);
 	snake_get_v(g->snake, &vx, &vy);
 
+	ui_update(g->ui);
 	tmpx = head->x + vx; 
 	tmpy = head->y + vy;
 

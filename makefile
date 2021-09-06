@@ -1,6 +1,6 @@
 OBJECTS = main.o game.o list.o ui.o getch.o snake.o
 CFLAGS = -g -Wall 
-LDLIBS = -pthread 
+LDLIBS = #-pthread 
 INCLUDE = -I include 
 TARGET = main
 SOURCES = $(OBJECTS: %c = %o)
