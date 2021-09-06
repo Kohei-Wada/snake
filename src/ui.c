@@ -7,9 +7,38 @@
 #include "game.h"
 #include "ui.h"
 
+
+
+static void ui_set_active(ui_t *ui, int active)
+{
+	ui->active = active;
+}
+
+
+static game_t* ui_get_game(ui_t *ui)
+{
+	return ui->g;
+}
+
+
+void ui_set_game(ui_t *ui, game_t *g)
+{
+	ui->g = g;
+}
+
+
+void ui_set_stage(ui_t *ui,  char **s)
+{
+	ui->stage = s;
+}
+
+
+	
+
+
 static void ui_display(ui_t *ui)
 {
-	game_t *g = ui->g;
+	game_t *g = ui_get_game(ui);
 
 	for (int y = 0; y < ui->stage_hgt; ++y) {
 		for (int x = 0; x < ui->stage_wid; ++x) {
@@ -34,7 +63,6 @@ static void ui_display(ui_t *ui)
 int ui_init(ui_t **ui, game_t *g)
 {
 
-	open_termios();
 	*ui = malloc(sizeof(ui_t));
 
 	if (!(*ui)) {
@@ -42,11 +70,15 @@ int ui_init(ui_t **ui, game_t *g)
 		return 1;
 	}
 
-	(*ui)->g = g;
-	(*ui)->stage = game_get_stage(g);
+	ui_set_game((*ui), g);
+	char **stage = game_get_stage(g);
+
+	ui_set_stage((*ui), stage);
 
 	game_stage_size(g, &(*ui)->stage_wid, &(*ui)->stage_hgt);
 	game_set_ui(g, *ui);
+
+	open_termios();
 
 	return 0;
 }
@@ -62,7 +94,7 @@ void ui_free(ui_t *ui)
 void *ui_loop(void *v)
 {
 	ui_t *ui = v;
-	ui->active = 1;
+	ui_set_active(ui, 1);
 
 	while (ui->active) {
 		system("clear");
@@ -78,9 +110,10 @@ void *ui_loop(void *v)
 	return NULL;
 }
 
+
 void ui_stop(ui_t *ui)
 {
-	ui->active = 0;
+	ui_set_active(ui, 0);
 }
 
 
