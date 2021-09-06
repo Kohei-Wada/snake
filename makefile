@@ -40,4 +40,4 @@ install:
 
 clean :
 	rm -f bin/$(TARGET) $(OBJDIR)/*
-	rm -r ~/.snake
+	rm -fr ~/.snake
