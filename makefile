@@ -32,12 +32,5 @@ $(OBJDIR)/%.o : $(LIBDIR)/%.c
 	fi;
 	$(CC) $(CFLAGS) $(LDLIBS) $(INCLUDE) -o $@ -c $<
 	
-
-install:
-	mkdir ~/.snake/
-	touch ~/.snake/data
-	cp $(BINDIR)/$(TARGET) ~/.snake/
-
 clean :
 	rm -f bin/$(TARGET) $(OBJDIR)/*
-	rm -fr ~/.snake
