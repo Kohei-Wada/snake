@@ -7,7 +7,6 @@
 #include "ui.h"
 
 
-
 typedef struct ui {
 	game_t *g;
 	pthread_t handle;
@@ -62,18 +61,12 @@ static void ui_display(ui_t *ui)
 void ui_update(ui_t *ui)
 {
 	system("clear");
+
 	ui_display(ui);
 
-	if (kbhit()) {
-		char key = getch();
-		game_set_key(ui->g, key);
-	}
+	if (kbhit()) 
+		game_set_key(ui->g, getch());
 
-}
-
-
-void ui_stop(ui_t *ui)
-{
 }
 
 

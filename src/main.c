@@ -9,10 +9,8 @@
 
 void usage(void)
 {
-
 	printf("inside usage\n");
 	exit(0);
-
 }
 
 
@@ -20,7 +18,6 @@ int main(int argc, char **argv)
 {
 
 	game_t *g;
-
 
 	int opt;
 	while ((opt = getopt(argc, argv, "h")) != -1) {
@@ -30,7 +27,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-
 	struct winsize size;
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
@@ -38,7 +34,6 @@ int main(int argc, char **argv)
 
 	if (game_init(&g, size.ws_col, size.ws_row - 2))
 		goto fail;
-
 
 	game_loop(g);
 	game_result(g);

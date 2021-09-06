@@ -24,6 +24,7 @@ typedef struct game {
 
 /******************************************************************/
 
+
 static char **stage_init(int wid, int hgt)
 {
 	char **stage = malloc(sizeof(char *) * wid);
@@ -48,6 +49,7 @@ static void stage_free(char **stage, int wid)
 
 	free(stage);
 }
+
 
 /******************************************************************/
 
@@ -148,7 +150,6 @@ void game_set_nfoods(game_t *g, int n)
 {
 	g->nfoods = n;
 }
-
 
 
 static void game_set_food(game_t *g)
@@ -307,11 +308,11 @@ static void save_result(int data)
 void game_result(game_t *g)
 {
 	int len = snake_len(g->snake);
+
 	system("clear");
 
 	printf("game over...\n");
 	printf("your length is %d\n", len);
-
 	save_result(len);
 }
 
@@ -325,6 +326,8 @@ int game_init(game_t **g, int wid, int hgt)
 		return 1;
 	}
 
+	(*g)->stage     = stage_init(wid, hgt);
+	(*g)->stage_cpy = stage_init(wid, hgt);
 	(*g)->key_buf   = malloc(sizeof(char));
 
 	game_set_active(*g, 1);
@@ -333,9 +336,7 @@ int game_init(game_t **g, int wid, int hgt)
 	game_set_stage_hgt(*g, hgt);
 	game_set_nfoods(*g, 10);
 
-	(*g)->stage     = stage_init(wid, hgt);
-	(*g)->stage_cpy = stage_init(wid, hgt);
-	
+
 	snake_init(&(*g)->snake, *g, wid / 2, hgt / 2);
 	ui_init(&(*g)->ui, *g);
 
