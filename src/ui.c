@@ -18,8 +18,6 @@ typedef struct ui {
 
 
 
-
-
 static void ui_set_active(ui_t *ui, int active)
 {
 	ui->active = active;

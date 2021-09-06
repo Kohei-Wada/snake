@@ -16,30 +16,36 @@ void usage(void)
 }
 
 
-int main(void)
+int main(int argc, char **argv)
 {
+
+	game_t *g;
+
+
+	int opt;
+	while ((opt = getopt(argc, argv, "h")) != -1) {
+		switch (opt) {
+		case 'h': usage(); break;
+		default : usage(); break;
+		}
+	}
+
 
 	struct winsize size;
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
 
-	game_t *g;
-	snake_t *s;
-	ui_t *ui;
 
 	if (game_init(&g, size.ws_col, size.ws_row - 2))
 		goto fail;
-	if (ui_init(&ui, g)) 
-		goto fail;
+
 
 	game_loop(g);
 	game_result(g);
 
 
   fail:
-	ui_free(ui);
 	game_free(g);
-
 	return 0;
 }
 
