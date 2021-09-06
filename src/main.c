@@ -2,8 +2,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "game.h"
+
+
+void usage(void)
+{
+
+	printf("inside usage\n");
+	exit(0);
+
+}
 
 
 int main(void)
@@ -21,15 +31,12 @@ int main(void)
 		goto fail;
 	if (ui_init(&ui, g)) 
 		goto fail;
-	if (snake_init(&s, g, size.ws_col/2, size.ws_row /2)) 
-		goto fail;
 
 	game_loop(g);
 	game_result(g);
 
 
   fail:
-	snake_free(s);
 	ui_free(ui);
 	game_free(g);
 

@@ -1,0 +1,72 @@
+#!/bin/sh
+
+
+snakedir=~/.snake/
+n_ranking=5
+
+usage () {
+
+	echo "snake"
+	echo "[Usage] snake [-h | -H | -r ]" 
+	echo "[Flags]"
+	echo 	-h    show this help
+	echo 	-H    show history
+	echo 	-r    show ranking
+	echo " "
+	echo [Operations]
+	echo	a : left 	
+	echo 	f : right	
+	echo 	e : up	
+	echo 	d : down
+	echo 	q : quit
+	echo 	p : pause
+	exit 0
+}
+
+
+show_history () {
+	echo [History]
+	cat $snakedir/data | column -t -s , 
+	exit 0
+}
+
+show_ranking () {
+	echo [Ranking]
+	cat $snakedir/data | sort -r -n -t , -k2  | column -t -s , | head -n $n_ranking
+	exit 0
+}
+
+
+run () {
+	$snakedir/main
+	echo " "
+	show_ranking
+}
+
+
+if [ ! -e $snakedir ]; then
+	echo error: make install 
+	exit 1
+fi
+
+
+while [ $# -gt 0 ]
+do
+	case $1 in 
+	-h) usage 
+		;;
+	-H) show_history 
+		;;
+	-r) show_ranking
+		;;
+	-*) usage
+		;;
+	*)  usage 
+		;;
+
+	esac
+	shift
+done
+
+
+run

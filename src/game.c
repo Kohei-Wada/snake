@@ -111,34 +111,6 @@ void game_set_ui(game_t *g, ui_t *ui)
 }
 
 
-int game_init(game_t **g, int wid, int hgt) 
-{
-	int foods = 10;
-
-	*g = malloc(sizeof(game_t));
-	if (!(*g)) {
-		perror("malloc"); 
-		return 1;
-	}
-
-	(*g)->buf       = malloc(sizeof(char));
-	(*g)->active    = 1;
-	(*g)->stage_wid = wid;
-	(*g)->stage_hgt = hgt;
-	(*g)->stage     = stage_init(wid, hgt);
-	(*g)->stage_cpy = stage_init(wid, hgt);
-	(*g)->pause     = 0;
-	
-
-	if (!(*g)->stage || !(*g)->stage_cpy)
-		return 1;
-
-	game_set_foods(*g, foods);
-
-	return 0;
-}
-
-
 void game_stage_size(game_t *g, int *wid, int *hgt)
 {
 	*wid = g->stage_wid;
@@ -242,16 +214,6 @@ static void game_update(game_t *g)
 		*g->buf = 0;
 	}
 }
-
-
-void game_free(game_t *g)
-{
-	stage_free(g->stage, g->stage_wid);
-	stage_free(g->stage_cpy, g->stage_wid);
-	free(g);
-}
-
-
 void game_loop(game_t *g)
 {
 	while (g->active) {
@@ -296,6 +258,48 @@ void game_result(game_t *g)
 	printf("your length is %d\n", len);
 
 	save_result(len);
+}
+
+
+
+int game_init(game_t **g, int wid, int hgt) 
+{
+	int foods = 10;
+
+	*g = malloc(sizeof(game_t));
+	if (!(*g)) {
+		perror("malloc"); 
+		return 1;
+	}
+
+	(*g)->buf       = malloc(sizeof(char));
+	(*g)->active    = 1;
+	(*g)->stage_wid = wid;
+	(*g)->stage_hgt = hgt;
+	(*g)->stage     = stage_init(wid, hgt);
+	(*g)->stage_cpy = stage_init(wid, hgt);
+	(*g)->pause     = 0;
+	
+
+	snake_init(&(*g)->snake, *g, wid / 2, hgt / 2);
+
+	if (!(*g)->stage || !(*g)->stage_cpy)
+		return 1;
+
+	game_set_foods(*g, foods);
+
+	return 0;
+}
+
+
+
+void game_free(game_t *g)
+{
+	stage_free(g->stage, g->stage_wid);
+	stage_free(g->stage_cpy, g->stage_wid);
+
+	snake_free(g->snake);
+	free(g);
 }
 
 
