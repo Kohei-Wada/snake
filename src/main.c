@@ -9,7 +9,19 @@
 
 void usage(void)
 {
-	printf("inside usage\n");
+	printf("[Usage] snake [-h]\n");
+	printf("[Flags]\n");
+	printf("-h    show this help\n");
+	printf("\n");
+
+	printf("[Operations]\n");
+	printf("a : left\n"); 	
+	printf("f : right\n");
+	printf("e : up\n");	
+	printf("d : down\n");
+	printf("q : quit\n");
+	printf("p : pause\n");
+
 	exit(0);
 }
 

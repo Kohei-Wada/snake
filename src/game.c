@@ -62,9 +62,7 @@ char game_get_key(game_t *g)
 
 void game_set_key(game_t *g, char key) 
 {
-	if (*g->key_buf == 0) {
-		*g->key_buf = key;
-	}
+	*g->key_buf = key;
 }
 
 
@@ -230,44 +228,38 @@ static void game_update(game_t *g)
 	}
 
 
-	/*XXX*/
+	switch (game_get_key(g)) {
+	case 'q' : 
+		game_set_active(g, 0);
+		break;
 
-	int key;
-	//update snake v
-	if (key = game_get_key(g)) {
-		switch (key) {
-		case 'q' : 
-			game_set_active(g, 0);
-			break;
+	case 'p' :
+		game_set_pause(g, !game_get_pause(g));
+		break;
 
-		case 'p' :
-			game_set_pause(g, !game_get_pause(g));
-			break;
+	case 'a' : 
+		if (vx != 1) 
+			snake_set_v(g->snake, -1, 0); 
+		break;
 
-		case 'a' : 
-			if (vx != 1) 
-				snake_set_v(g->snake, -1, 0); 
-			break;
+	case 'f' : 
+		if (vx != -1)
+			snake_set_v(g->snake, 1 , 0); 
+		break;
 
-		case 'f' : 
-			if (vx != -1)
-				snake_set_v(g->snake, 1 , 0); 
-			break;
+	case 'e' : 
+		if (vy != 1)
+			snake_set_v(g->snake, 0, -1); 
+		break; 
 
-		case 'e' : 
-			if (vy != 1)
-				snake_set_v(g->snake, 0, -1); 
-			break; 
-
-		case 'd' : 
-			if (vy != -1)
-				snake_set_v(g->snake, 0, 1); 
-			break;
-		}
-
-		//clear key buf
-		*g->key_buf = 0;
+	case 'd' : 
+		if (vy != -1)
+			snake_set_v(g->snake, 0, 1); 
+		break;
 	}
+
+	//clear key buffer
+	game_set_key(g, 0);
 }
 
 
@@ -354,6 +346,7 @@ void game_free(game_t *g)
 	stage_free(g->stage, g->stage_wid);
 	stage_free(g->stage_cpy, g->stage_wid);
 
+	free(g->key_buf);
 	snake_free(g->snake);
 	ui_free(g->ui);
 
