@@ -5,9 +5,27 @@
 #include <unistd.h>
 #include <time.h>
 
-
-#include "snake.h"
 #include "game.h"
+
+typedef struct game {
+	char *buf;
+	ui_t *ui;
+	int active;
+	char **stage;
+	char **stage_cpy;
+	int stage_wid;
+	int stage_hgt;
+	snake_t *snake;
+	pthread_mutex_t mutex;
+	int pause;
+} game_t;
+
+
+
+int game_get_pause(game_t *g)
+{
+	return g->pause;
+}
 
 
 static void game_set_food(game_t *g)
@@ -32,9 +50,24 @@ static char **game_get_stage_cpy(game_t *g)
 
 
 
-static snake_t *game_get_snake(game_t *g)
+snake_t *game_get_snake(game_t *g)
 {
 	return g->snake;
+}
+
+
+char **game_get_stage(game_t *g)
+{
+	return g->stage;
+}
+
+
+
+void game_set_key(game_t *g, char key) 
+{
+	if (*g->buf == 0) {
+		*g->buf = key;
+	}
 }
 
 
@@ -224,22 +257,6 @@ void game_loop(game_t *g)
 	while (g->active) {
 		game_update(g);
 		usleep(70000);
-	}
-}
-
-
-char **game_get_stage(game_t *g)
-{
-	return g->stage;
-}
-
-
-
-
-void game_key_add(game_t *g, char key) 
-{
-	if (*g->buf == 0) {
-		*g->buf = key;
 	}
 }
 

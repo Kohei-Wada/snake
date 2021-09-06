@@ -7,6 +7,19 @@
 #include "ui.h"
 
 
+typedef struct ui {
+	game_t *g;
+	pthread_t handle;
+	char **stage;
+	int stage_wid;
+	int stage_hgt;
+	int active;
+} ui_t;
+
+
+
+
+
 static void ui_set_active(ui_t *ui, int active)
 {
 	ui->active = active;
@@ -49,10 +62,10 @@ static void ui_display(ui_t *ui)
 		printf("\n");
 	}
 
-	if (g->pause)
+	if (game_get_pause(g))
 		printf("pause : press 'p' to continue\n");
 	else 
-		printf("your length is %d\n", snake_len(g->snake));
+		printf("your length is %d\n", snake_len(game_get_snake(g)));
 }
 
 
@@ -94,11 +107,10 @@ void ui_update(ui_t *ui)
 
 	if (kbhit()) {
 		char key = getch();
-		game_key_add(ui->g, key);
+		game_set_key(ui->g, key);
 	}
 
 }
-
 
 
 void *ui_loop(void *v)

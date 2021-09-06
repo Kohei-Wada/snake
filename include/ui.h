@@ -4,16 +4,7 @@
 #include "game.h"
 
 
-
-typedef struct ui {
-	game_t *g;
-	pthread_t handle;
-	char **stage;
-	int stage_wid;
-	int stage_hgt;
-	int active;
-} ui_t;
-
+typedef struct ui ui_t;
 
 
 int ui_init(ui_t **ui, game_t *g);

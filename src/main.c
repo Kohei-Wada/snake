@@ -4,8 +4,6 @@
 #include <sys/ioctl.h>
 
 #include "game.h"
-#include "ui.h"
-#include "snake.h"
 
 
 int main(void)
