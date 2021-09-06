@@ -7,6 +7,7 @@
 
 #include "game.h"
 
+
 typedef struct game {
 	char     *key_buf;
 	ui_t     *ui;        //ui object
@@ -17,7 +18,38 @@ typedef struct game {
 	int       stage_hgt;
 	int       pause;
 	int       active;
+	int       nfoods;
 } game_t;
+
+
+/******************************************************************/
+
+static char **stage_init(int wid, int hgt)
+{
+	char **stage = malloc(sizeof(char *) * wid);
+
+	for (int i = 0; i < wid; ++i) 
+		stage[i] = malloc(sizeof(char) * hgt);
+
+	for (int y = 0; y < hgt; ++y) 
+		stage[0][y] = stage[wid - 1][y] = WALL_V;
+
+	for (int x = 0; x < wid; ++x)
+		stage[x][0] = stage[x][hgt - 1] = WALL_H;
+
+	return stage;
+}
+
+
+static void stage_free(char **stage, int wid)
+{
+	for (int i = 0; i < wid; ++i)
+		free(stage[i]);
+
+	free(stage);
+}
+
+/******************************************************************/
 
 
 char game_get_key(game_t *g)
@@ -46,18 +78,6 @@ ui_t *game_get_ui(game_t *g)
 }
 
 
-int game_get_pause(game_t *g)
-{
-	return g->pause;
-}
-
-
-void game_set_pause(game_t *g, int p)
-{
-	g->pause = p;
-}
-
-
 snake_t *game_get_snake(game_t *g)
 {
 	return g->snake;
@@ -76,15 +96,58 @@ static char **game_get_stage_cpy(game_t *g)
 }
 
 
-
-
-
-
 char **game_get_stage(game_t *g)
 {
 	return g->stage;
 }
 
+
+void game_set_stage_wid(game_t *g, int wid)
+{
+	g->stage_wid = wid;
+}
+
+
+void game_set_stage_hgt(game_t *g, int hgt)
+{
+	g->stage_hgt = hgt;
+}
+
+
+void game_set_active(game_t *g, int a)
+{
+	g->active = a;
+}
+
+
+int game_get_active(game_t *g)
+{
+	return g->active;
+}
+
+
+int game_get_pause(game_t *g)
+{
+	return g->pause;
+}
+
+
+void game_set_pause(game_t *g, int p)
+{
+	g->pause = p;
+}
+
+
+int game_get_nfoods(game_t *g)
+{
+	return g->nfoods;
+}
+
+
+void game_set_nfoods(game_t *g, int n)
+{
+	g->nfoods = n;
+}
 
 
 
@@ -95,40 +158,12 @@ static void game_set_food(game_t *g)
 }
 
 
-static void game_set_foods(game_t *g, int n)
+static void game_set_foods(game_t *g)
 {
 	srand(time(NULL));
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < game_get_nfoods(g) ; ++i)
 		game_set_food(g);
 }
-
-static char **stage_init(int wid, int hgt)
-{
-	char **stage = malloc(sizeof(char *) * wid);
-
-	for (int i = 0; i < wid; ++i) 
-		stage[i] = malloc(sizeof(char) * hgt);
-
-	for (int y = 0; y < hgt; ++y) 
-		stage[0][y] = stage[wid - 1][y] = WALL_V;
-
-	for (int x = 0; x < wid; ++x)
-		stage[x][0] = stage[x][hgt - 1] = WALL_H;
-
-	return stage;
-}
-
-
-
-static void stage_free(char **stage, int wid)
-{
-	for (int i = 0; i < wid; ++i)
-		free(stage[i]);
-
-	free(stage);
-}
-
-
 
 
 void game_stage_size(game_t *g, int *wid, int *hgt)
@@ -168,11 +203,9 @@ static void game_update(game_t *g)
 	int vx = snake_get_vx(s);
 	int vy = snake_get_vy(s);
 
-
 	pos_t *head = snake_get_pos(s, 0);
 	int tmpx = head->x + vx; 
 	int tmpy = head->y + vy;
-
 
 	//check if snake is dead
 	if (!g->pause) {
@@ -203,12 +236,11 @@ static void game_update(game_t *g)
 	if (key = game_get_key(g)) {
 		switch (key) {
 		case 'q' : 
-			g->active = 0; 
-			ui_stop(g->ui);
+			game_set_active(g, 0);
 			break;
 
 		case 'p' :
-			g->pause = !g->pause;
+			game_set_pause(g, !game_get_pause(g));
 			break;
 
 		case 'a' : 
@@ -272,7 +304,6 @@ static void save_result(int data)
 }
 
 
-
 void game_result(game_t *g)
 {
 	int len = snake_len(g->snake);
@@ -285,10 +316,8 @@ void game_result(game_t *g)
 }
 
 
-
 int game_init(game_t **g, int wid, int hgt) 
 {
-	int foods = 10;
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) {
@@ -297,21 +326,23 @@ int game_init(game_t **g, int wid, int hgt)
 	}
 
 	(*g)->key_buf   = malloc(sizeof(char));
-	(*g)->active    = 1;
-	(*g)->stage_wid = wid;
-	(*g)->stage_hgt = hgt;
+
+	game_set_active(*g, 1);
+	game_set_pause(*g, 0);
+	game_set_stage_wid(*g, wid);
+	game_set_stage_hgt(*g, hgt);
+	game_set_nfoods(*g, 10);
+
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
-	(*g)->pause     = 0;
 	
-
 	snake_init(&(*g)->snake, *g, wid / 2, hgt / 2);
 	ui_init(&(*g)->ui, *g);
 
 	if (!(*g)->stage || !(*g)->stage_cpy)
 		return 1;
 
-	game_set_foods(*g, foods);
+	game_set_foods(*g);
 
 	return 0;
 }
@@ -324,6 +355,7 @@ void game_free(game_t *g)
 
 	snake_free(g->snake);
 	ui_free(g->ui);
+
 	free(g);
 }
 

@@ -11,8 +11,6 @@ int ui_init(ui_t **ui, game_t *g);
 void ui_free(ui_t *ui);
 
 void ui_update(ui_t *ui);
-void ui_start(ui_t *ui);
-void ui_stop(ui_t *ui);
 
 
 #endif

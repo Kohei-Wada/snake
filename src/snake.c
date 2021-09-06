@@ -14,19 +14,16 @@ typedef struct snake {
 } snake_t;
 
 
-void snake_update(snake_t *s)
-{
-	pos_t *current, *prev;
-	for (int i = s->len - 1; i > 0; --i) {
-		current = list_get(s->l, i);
-		prev = list_get(s->l , i - 1);
-		current->x = prev->x; 
-		current->y = prev->y;
-	}
 
-	current = list_get(s->l, 0);
-	current->x += s->vx;
-	current->y += s->vy;
+pos_t *snake_get_pos(snake_t *s, int index)
+{
+	return list_get(s->l, index);
+}
+
+
+int snake_len(snake_t *s)
+{
+	return s->len;
 }
 
 
@@ -54,17 +51,36 @@ void snake_set_vy(snake_t *s, int v)
 }
 
 
-
 void snake_set_v(snake_t *s, int vx, int vy)
 {
 	s->vx = vx;
 	s->vy = vy;
 }
 
-void snake_get_v(snake_t *s, int *vx, int *vy)
+
+void snake_add(snake_t *s, int x, int y)
 {
-	*vx = s->vx; 
-	*vy = s->vy;
+	pos_t *p = malloc(sizeof(pos_t));
+	
+	p->x = x; p->y = y;
+	list_add_head(s->l, p);
+	++s->len;
+}
+
+
+void snake_update(snake_t *s)
+{
+	pos_t *current, *prev;
+	for (int i = s->len - 1; i > 0; --i) {
+		current = list_get(s->l, i);
+		prev = list_get(s->l , i - 1);
+		current->x = prev->x; 
+		current->y = prev->y;
+	}
+
+	current = list_get(s->l, 0);
+	current->x += s->vx;
+	current->y += s->vy;
 }
 
 
@@ -104,28 +120,6 @@ void snake_free(snake_t *s)
 	}
 	list_free(s->l);
 	free(s);
-}
-
-
-pos_t *snake_get_pos(snake_t *s, int index)
-{
-	return list_get(s->l, index);
-}
-
-
-int snake_len(snake_t *s)
-{
-	return s->len;
-}
-
-
-void snake_add(snake_t *s, int x, int y)
-{
-	pos_t *p = malloc(sizeof(pos_t));
-	
-	p->x = x; p->y = y;
-	list_add_head(s->l, p);
-	++s->len;
 }
 
 

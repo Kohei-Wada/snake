@@ -7,21 +7,14 @@
 #include "ui.h"
 
 
+
 typedef struct ui {
 	game_t *g;
 	pthread_t handle;
 	char **stage;
 	int stage_wid;
 	int stage_hgt;
-	int active;
 } ui_t;
-
-
-
-static void ui_set_active(ui_t *ui, int active)
-{
-	ui->active = active;
-}
 
 
 static game_t* ui_get_game(ui_t *ui)
@@ -40,7 +33,6 @@ void ui_set_stage(ui_t *ui,  char **s)
 {
 	ui->stage = s;
 }
-
 
 
 static void ui_display(ui_t *ui)
@@ -64,6 +56,24 @@ static void ui_display(ui_t *ui)
 		printf("pause : press 'p' to continue\n");
 	else 
 		printf("your length is %d\n", snake_len(game_get_snake(g)));
+}
+
+
+void ui_update(ui_t *ui)
+{
+	system("clear");
+	ui_display(ui);
+
+	if (kbhit()) {
+		char key = getch();
+		game_set_key(ui->g, key);
+	}
+
+}
+
+
+void ui_stop(ui_t *ui)
+{
 }
 
 
@@ -96,39 +106,5 @@ void ui_free(ui_t *ui)
 	close_termios();
 	free(ui);
 }
-
-
-void ui_update(ui_t *ui)
-{
-	system("clear");
-	ui_display(ui);
-
-	if (kbhit()) {
-		char key = getch();
-		game_set_key(ui->g, key);
-	}
-
-}
-
-
-void *ui_loop(void *v)
-{
-	ui_t *ui = v;
-	ui_set_active(ui, 1);
-
-	while (ui->active) {
-		ui_update(ui);
-		usleep(70000);
-	}
-
-	return NULL;
-}
-
-
-void ui_stop(ui_t *ui)
-{
-	ui_set_active(ui, 0);
-}
-
 
 
