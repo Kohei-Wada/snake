@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/ioctl.h>
 
 #include "game.h"
 
@@ -182,9 +183,11 @@ static void game_plot_snake(game_t *g, snake_t *s)
 	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
 	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
 
+	//claer snake
 	for (i = 0; i < wid; ++i) 
 		memcpy(stage[i], cpy[i], sizeof(char) * hgt);
 
+	//plot snake
 	pos_t *pos;
 	for (i = 0; i < snake_len(s); ++i) {
 		pos = snake_get_pos(s, i);
@@ -210,7 +213,7 @@ static void game_update(game_t *g)
 	int tmpy = head->y + vy;
 
 	//check if snake is dead
-	if (!g->pause) {
+	if (!game_get_pause(g)) {
 		switch (g->stage[tmpx][tmpy]) {
 		case WALL_H:
 		case WALL_V:
@@ -283,12 +286,36 @@ void game_result(game_t *g)
 }
 
 
-int game_init(game_t **g, int wid, int hgt) 
+int game_update_winsize(game_t *g)
+{
+	struct winsize size;
+	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
+		return 1;
+
+	game_set_stage_wid(g, size.ws_col); 
+	game_set_stage_hgt(g, size.ws_row - 2); 
+
+	return 0;
+}
+
+
+
+int game_init(game_t **g) 
 {
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) 
 		goto error0;
+
+	if (game_update_winsize(*g))
+		goto error0;
+
+	int wid = game_get_stage_wid(*g);
+	int hgt = game_get_stage_hgt(*g);
+
+	game_set_active(*g, 1);
+	game_set_pause(*g, 0);
+	game_set_nfoods(*g, 10);
 
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
@@ -297,13 +324,6 @@ int game_init(game_t **g, int wid, int hgt)
 	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
 		goto error1;
 
-	game_set_active(*g, 1);
-	game_set_pause(*g, 0);
-	game_set_stage_wid(*g, wid);
-	game_set_stage_hgt(*g, hgt);
-	game_set_nfoods(*g, 10);
-	game_set_foods(*g);
-
 
 	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2)) 
 		goto error2;
@@ -311,8 +331,11 @@ int game_init(game_t **g, int wid, int hgt)
 	if (ui_init(&(*g)->ui, *g)) 
 		goto error3;
 
-	return 0;
 
+	//after initialized stage, set foods
+	game_set_foods(*g);
+
+	return 0;
 
 
   error3:
@@ -324,7 +347,6 @@ int game_init(game_t **g, int wid, int hgt)
 	free((*g)->stage);
 	free((*g)->stage_cpy);
 	free((*g)->key_buf);
-
 
   error0:
 	free(*g);
