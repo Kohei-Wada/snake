@@ -2,12 +2,13 @@
 #define GAME_H
 
 #include "snake.h"
-#include "list.h"
 #include "ui.h"
+
 
 typedef struct game game_t;
 
-enum {FIELD, WALL_H, WALL_V, SNAKE, FOOD};
+enum {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE, BLACKSNK, REDSNK, GREENSNK, YELLOWSNK, BLUESNK, 
+			MAGENTASNK, CYAANSNK, WHITESNK};
 
 
 int game_get_stage_wid(game_t *g);

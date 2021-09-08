@@ -8,7 +8,6 @@
 
 #include "game.h"
 
-
 typedef struct game {
 	char     *key_buf;
 	ui_t     *ui;        //ui object
@@ -172,7 +171,6 @@ static void game_set_food(game_t *g)
 
 static void game_set_foods(game_t *g)
 {
-	srand(time(NULL));
 	for (int i = 0; i < game_get_nfoods(g) ; ++i)
 		game_set_food(g);
 }
@@ -191,7 +189,7 @@ static void game_plot_snake(game_t *g, snake_t *s)
 	pos_t *pos;
 	for (i = 0; i < snake_len(s); ++i) {
 		pos = snake_get_pos(s, i);
-		stage[pos->x][pos->y] = SNAKE;
+		stage[pos->x][pos->y] = snake_get_color(s);
 	}
 }
 
@@ -215,12 +213,6 @@ static void game_update(game_t *g)
 	//check if snake is dead
 	if (!game_get_pause(g)) {
 		switch (g->stage[tmpx][tmpy]) {
-		case WALL_H:
-		case WALL_V:
-		case SNAKE :
-			game_set_active(g, 0);
-			break;
-
 		case FIELD : 
 			snake_update(g->snake);
 			break;
@@ -229,6 +221,11 @@ static void game_update(game_t *g)
 			g->stage_cpy[tmpx][tmpy] = FIELD;
 			snake_add(g->snake, tmpx, tmpy);
 			game_set_food(g);
+			break;
+		
+		default:
+			//dead
+			game_set_active(g, 0);
 			break;
 		}
 	}
@@ -281,8 +278,10 @@ void game_loop(game_t *g)
 void game_result(game_t *g)
 {
 	system("clear");
+
 	printf("game over...\n");
 	printf("your length is %d\n", snake_len(game_get_snake(g)));
+
 }
 
 
@@ -300,8 +299,16 @@ int game_update_winsize(game_t *g)
 
 
 
+static int random_color()
+{
+	return 4 + random() % 10;
+}
+
+
+
 int game_init(game_t **g) 
 {
+	srand(time(NULL));
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) 
@@ -324,8 +331,7 @@ int game_init(game_t **g)
 	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
 		goto error1;
 
-
-	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2)) 
+	if (snake_init(&(*g)->snake, *g, wid / 2, hgt / 2, random_color())) 
 		goto error2;
 		
 	if (ui_init(&(*g)->ui, *g)) 

@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "game.h"
-#include "list.h"
 #include "snake.h"
 
 
@@ -11,6 +9,7 @@ typedef struct snake {
 	int len;
 	int vx;
 	int vy;
+	int color;
 } snake_t;
 
 
@@ -63,6 +62,19 @@ void snake_set_v(snake_t *s, int vx, int vy)
 }
 
 
+void snake_set_color(snake_t *s, int color)
+{
+	s->color = color;
+}
+
+
+int snake_get_color(snake_t *s)
+{
+	return s->color;
+}
+
+
+
 void snake_add(snake_t *s, int x, int y)
 {
 	pos_t *p = malloc(sizeof(pos_t));
@@ -90,7 +102,7 @@ void snake_update(snake_t *s)
 }
 
 
-int snake_init(snake_t **s, game_t *g, int x, int y) 
+int snake_init(snake_t **s, game_t *g, int x, int y, int color) 
 {
 	*s = malloc(sizeof(snake_t));
 	if (!(*s)) 
@@ -99,6 +111,7 @@ int snake_init(snake_t **s, game_t *g, int x, int y)
 	snake_set_len(*s, 0);
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
+	snake_set_color(*s, color);
 
 	if (list_init(&(*s)->l)) 
 		goto error1;

@@ -9,6 +9,7 @@ LIBDIR = lib
 OBJDIR = obj
 SOURCEDIR = src
 BINDIR = bin
+CC = gcc
 
 
 

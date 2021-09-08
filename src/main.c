@@ -26,20 +26,27 @@ void usage(void)
 }
 
 
-int main(int argc, char **argv)
+void setup_options(int argc, char **argv)
 {
-	game_t *g;
-
 	int opt;
-	while ((opt = getopt(argc, argv, "h")) != -1) {
+	while ((opt = getopt(argc, argv, "hf:c:")) != -1) {
 		switch (opt) {
 		case 'h': usage(); break;
 		default : usage(); break;
 		}
 	}
+}
+
+
+int main(int argc, char **argv)
+{
+	game_t *g;
+
+	setup_options(argc, argv);
 
 	if (game_init(&g))
 		return 1;
+
 
 	game_loop(g);
 	game_result(g);
