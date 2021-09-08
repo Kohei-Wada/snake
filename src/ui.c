@@ -35,11 +35,11 @@ static void ui_display(ui_t *ui)
 		for (int x = 0; x < game_get_stage_wid(g); ++x) {
 
 			switch (stage[x][y]) {
+			case FIELD   : printf(" ");            break;
 			case WALL_H  : printf("=");            break;
 			case WALL_V  : printf("|");            break;
-			case FIELD   : printf(" ");            break;
-			case SNAKE   : printf("\e[32mo\e[0m"); break;
 			case FOOD    : printf("\e[31m@\e[0m"); break;
+			case SNAKE   : printf("\e[32mo\e[0m"); break;
 
 			case BLACKSNK     : printf("\e[30mo\e[0m"); break;
 			case REDSNK       : printf("\e[31mo\e[0m"); break;

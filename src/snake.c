@@ -3,7 +3,6 @@
 
 #include "snake.h"
 
-
 typedef struct snake {
 	list_t *l;
 	int len;
