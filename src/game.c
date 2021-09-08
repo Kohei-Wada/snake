@@ -189,7 +189,7 @@ static void game_plot_snake(game_t *g, snake_t *s)
 	pos_t *pos;
 	for (i = 0; i < snake_len(s); ++i) {
 		pos = snake_get_pos(s, i);
-		stage[pos->x][pos->y] = snake_get_color(s);
+		stage[pos->x][pos->y] = SNAKE;
 	}
 }
 
@@ -297,11 +297,9 @@ int game_update_winsize(game_t *g)
 	return 0;
 }
 
-
-
-static int random_color()
+static scolor_t random_color()
 {
-	return (int)random()%9 + 4;
+	return random() % 8;
 }
 
 

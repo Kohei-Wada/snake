@@ -29,6 +29,7 @@ static void ui_display(ui_t *ui)
 {
 	game_t *g = ui_get_game(ui);
 	char **stage = game_get_stage(g);
+	snake_t *s = game_get_snake(g);
 
 	for (int y = 0; y < game_get_stage_hgt(g); ++y) {
 
@@ -39,17 +40,9 @@ static void ui_display(ui_t *ui)
 			case WALL_H  : printf("=");            break;
 			case WALL_V  : printf("|");            break;
 			case FOOD    : printf("\e[31m@\e[0m"); break;
-			case SNAKE   : printf("\e[32mo\e[0m"); break;
-
-			case BLACKSNK     : printf("\e[30mo\e[0m"); break;
-			case REDSNK       : printf("\e[31mo\e[0m"); break;
-			case GREENSNK     : printf("\e[32mo\e[0m"); break;
-			case YELLOWSNK    : printf("\e[33mo\e[0m"); break;
-			case BLUESNK      : printf("\e[34mo\e[0m"); break;
-			case MAGENTASNK   : printf("\e[35mo\e[0m"); break;
-			case CYAANSNK     : printf("\e[36mo\e[0m"); break;
-			case WHITESNK     : printf("\e[37mo\e[0m"); break;
-						   
+			case SNAKE:
+						   printf("%s", snake_get_color(s));
+						   break;
 			}
 		}
 		printf("\n");

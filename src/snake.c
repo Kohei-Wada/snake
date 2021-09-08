@@ -8,7 +8,7 @@ typedef struct snake {
 	int len;
 	int vx;
 	int vy;
-	int color;
+	const char *color;
 } snake_t;
 
 
@@ -61,17 +61,27 @@ void snake_set_v(snake_t *s, int vx, int vy)
 }
 
 
-void snake_set_color(snake_t *s, int color)
-{
-	s->color = color;
-}
+const char *sclr[] = {
+	"\e[30mo\e[0m",
+	"\e[31mo\e[0m",
+	"\e[32mo\e[0m",
+	"\e[33mo\e[0m",
+	"\e[34mo\e[0m",
+	"\e[35mo\e[0m",
+	"\e[36mo\e[0m",
+	"\e[37mo\e[0m",
+};
 
 
-int snake_get_color(snake_t *s)
+const char *snake_get_color(snake_t *s)
 {
 	return s->color;
 }
 
+void snake_set_color(snake_t *s, scolor_t c)
+{
+	s->color = sclr[c];
+}
 
 
 void snake_add(snake_t *s, int x, int y)
@@ -101,7 +111,7 @@ void snake_update(snake_t *s)
 }
 
 
-int snake_init(snake_t **s, game_t *g, int x, int y, int color) 
+int snake_init(snake_t **s, game_t *g, int x, int y, scolor_t c) 
 {
 	*s = malloc(sizeof(snake_t));
 	if (!(*s)) 
@@ -110,7 +120,7 @@ int snake_init(snake_t **s, game_t *g, int x, int y, int color)
 	snake_set_len(*s, 0);
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
-	snake_set_color(*s, color);
+	snake_set_color(*s, c);
 
 	if (list_init(&(*s)->l)) 
 		goto error1;
