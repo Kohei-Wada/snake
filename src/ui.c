@@ -36,13 +36,25 @@ static void ui_display(ui_t *ui)
 		for (int x = 0; x < game_get_stage_wid(g); ++x) {
 
 			switch (stage[x][y]) {
-			case FIELD   : printf(" ");            break;
-			case WALL_H  : printf("=");            break;
-			case WALL_V  : printf("|");            break;
-			case FOOD    : printf("\e[31m@\e[0m"); break;
+			case FIELD: 
+				printf(" ");
+				break;
+
+			case WALL_H: 
+				printf("=");
+				break;
+
+			case WALL_V: 
+				printf("|");
+				break;
+
+			case FOOD: 
+				printf("\e[31m@\e[0m"); 
+				break;
+
 			case SNAKE:
-						   printf("%s", snake_get_color(s));
-						   break;
+				printf("%s", snake_get_color(s));
+				break;
 			}
 		}
 		printf("\n");
