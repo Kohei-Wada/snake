@@ -58,6 +58,8 @@ void snake_update(snake_t *s);
 int snake_len(snake_t *s);
 
 pos_t *snake_get_pos(snake_t *s, int index);
+int snake_get_pos_x(snake_t *s, int index);
+int snake_get_pos_y(snake_t *s, int index);
 
 const char *snake_get_type(snake_t *s);
 

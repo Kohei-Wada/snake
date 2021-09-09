@@ -187,11 +187,13 @@ static void game_clear_snake(game_t *g)
 
 static void game_plot_snake(game_t *g, snake_t *s)
 {
+	int x, y;
 	char **stage = game_get_stage(g); 
-	pos_t *pos;
+
 	for (int i = 0; i < snake_len(s); ++i) {
-		pos = snake_get_pos(s, i);
-		stage[pos->x][pos->y] = SNAKE;
+		x = snake_get_pos_x(s, i);
+		y = snake_get_pos_y(s, i);
+		stage[x][y] = SNAKE;
 	}
 }
 
@@ -209,9 +211,9 @@ static void game_update(game_t *g)
 	int vx = snake_get_vx(s);
 	int vy = snake_get_vy(s);
 
-	pos_t *head = snake_get_pos(s, 0);
-	int tmpx = head->x + vx; 
-	int tmpy = head->y + vy;
+	int tmpx = snake_get_pos_x(s, 0) + vx;
+	int tmpy = snake_get_pos_y(s, 0) + vy;
+	
 
 	//check if snake is dead
 	if (!game_get_pause(g)) {

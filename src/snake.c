@@ -18,6 +18,20 @@ pos_t *snake_get_pos(snake_t *s, int index)
 }
 
 
+int snake_get_pos_x(snake_t *s, int index)
+{
+	pos_t *p = list_get(s->l, index);
+	return p->x;
+}
+
+
+int snake_get_pos_y(snake_t *s, int index)
+{
+	pos_t *p = list_get(s->l, index);
+	return p->y;
+}
+
+
 int snake_len(snake_t *s)
 {
 	return s->len;

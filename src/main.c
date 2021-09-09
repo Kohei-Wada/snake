@@ -9,18 +9,18 @@
 
 void usage(void)
 {
-	printf("[Usage] snake [-h]\n");
-	printf("[Flags]\n");
-	printf("-h    show this help\n");
-	printf("\n");
+	fprintf(stderr, "[Usage] snake [-h]\n");
+	fprintf(stderr, "[Flags]\n");
+	fprintf(stderr, "-h    show this help\n");
+	fprintf(stderr, "\n");
 
-	printf("[Operations]\n");
-	printf("a : left\n"); 	
-	printf("f : right\n");
-	printf("e : up\n");	
-	printf("d : down\n");
-	printf("q : quit\n");
-	printf("p : pause\n");
+	fprintf(stderr, "[Operations]\n");
+	fprintf(stderr, "a : left\n"); 	
+	fprintf(stderr, "f : right\n");
+	fprintf(stderr, "e : up\n");	
+	fprintf(stderr, "d : down\n");
+	fprintf(stderr, "q : quit\n");
+	fprintf(stderr, "p : pause\n");
 
 	exit(0);
 }
