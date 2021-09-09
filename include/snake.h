@@ -34,6 +34,8 @@ typedef enum {
 	PLUSMAGENTA,
 	PLUSCYAAN,
 	PLUSWHITE=23,
+
+	RAINBOW,
 } stype_t;
 
 

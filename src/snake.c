@@ -8,7 +8,7 @@ typedef struct snake {
 	int len;
 	int vx;
 	int vy;
-	const char *type;
+	stype_t type;
 } snake_t;
 
 
@@ -93,12 +93,17 @@ const char *stype[] = {
 
 const char *snake_get_type(snake_t *s)
 {
-	return s->type;
+	stype_t type = s->type;
+
+	if (type == RAINBOW)
+		return stype[random()%23];
+	else 
+		return stype[type];
 }
 
 void snake_set_type(snake_t *s, stype_t t)
 {
-	s->type = stype[t];
+	s->type = t;
 }
 
 

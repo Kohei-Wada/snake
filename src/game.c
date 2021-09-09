@@ -303,9 +303,9 @@ int game_update_winsize(game_t *g)
 }
 
 
-static stype_t random_color()
+static stype_t random_type()
 {
-	return random() % 24;
+	return random() % 25;
 }
 
 
@@ -334,7 +334,7 @@ int game_init(game_t **g)
 	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
 		goto error1;
 
-	if (snake_init(&(*g)->snake, *g, wid/2, hgt/2, random_color())) 
+	if (snake_init(&(*g)->snake, *g, wid/2, hgt/2, random_type())) 
 		goto error2;
 		
 	if (ui_init(&(*g)->ui, *g)) 
