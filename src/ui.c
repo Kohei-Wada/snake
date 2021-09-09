@@ -53,7 +53,7 @@ static void ui_display(ui_t *ui)
 				break;
 
 			case SNAKE:
-				printf("%s", snake_get_color(s));
+				printf("%s", snake_get_type(s));
 				break;
 			}
 		}

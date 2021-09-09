@@ -215,14 +215,17 @@ static void game_update(game_t *g)
 
 	//check if snake is dead
 	if (!game_get_pause(g)) {
-		switch (g->stage[tmpx][tmpy]) {
+		char **stage = game_get_stage(g);
+		char **cpy = game_get_stage_cpy(g);
+		
+		switch (stage[tmpx][tmpy]) {
 		case FIELD : 
-			snake_update(g->snake);
+			snake_update(s);
 			break;
 
 		case FOOD: 
-			g->stage_cpy[tmpx][tmpy] = FIELD;
-			snake_add(g->snake, tmpx, tmpy);
+			cpy[tmpx][tmpy] = FIELD;
+			snake_add(s, tmpx, tmpy);
 			game_set_food(g);
 			break;
 		
@@ -232,7 +235,6 @@ static void game_update(game_t *g)
 			break;
 		}
 	}
-
 
 	switch (game_get_key(g)) {
 	case 'q' : 
@@ -245,22 +247,22 @@ static void game_update(game_t *g)
 
 	case 'a' : 
 		if (vx != 1) 
-			snake_set_v(g->snake, -1, 0); 
+			snake_set_v(s, -1, 0); 
 		break;
 
 	case 'f' : 
 		if (vx != -1)
-			snake_set_v(g->snake, 1 , 0); 
+			snake_set_v(s, 1 , 0); 
 		break;
 
 	case 'e' : 
 		if (vy != 1)
-			snake_set_v(g->snake, 0, -1); 
+			snake_set_v(s, 0, -1); 
 		break; 
 
 	case 'd' : 
 		if (vy != -1)
-			snake_set_v(g->snake, 0, 1); 
+			snake_set_v(s, 0, 1); 
 		break;
 	}
 
@@ -301,9 +303,9 @@ int game_update_winsize(game_t *g)
 }
 
 
-static scolor_t random_color()
+static stype_t random_color()
 {
-	return random() % 8;
+	return random() % 24;
 }
 
 
