@@ -176,18 +176,20 @@ static void game_set_foods(game_t *g)
 }
 
 
-static void game_plot_snake(game_t *g, snake_t *s)
+static void game_clear_snake(game_t *g)
 {
 	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
 	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
-
-	//claer snake
 	for (i = 0; i < wid; ++i) 
 		memcpy(stage[i], cpy[i], sizeof(char) * hgt);
+}
 
-	//plot snake
+
+static void game_plot_snake(game_t *g, snake_t *s)
+{
+	char **stage = game_get_stage(g); 
 	pos_t *pos;
-	for (i = 0; i < snake_len(s); ++i) {
+	for (int i = 0; i < snake_len(s); ++i) {
 		pos = snake_get_pos(s, i);
 		stage[pos->x][pos->y] = SNAKE;
 	}
@@ -200,6 +202,7 @@ static void game_update(game_t *g)
 	snake_t *s = game_get_snake(g);
 	ui_t *ui = game_get_ui(g);
 
+	game_clear_snake(g);
 	game_plot_snake(g, s);
 	ui_update(ui);
 
@@ -297,11 +300,11 @@ int game_update_winsize(game_t *g)
 	return 0;
 }
 
+
 static scolor_t random_color()
 {
 	return random() % 8;
 }
-
 
 
 int game_init(game_t **g) 
