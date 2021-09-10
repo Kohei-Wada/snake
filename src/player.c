@@ -9,6 +9,8 @@ typedef struct player {
 	snake_t *snake;
 	ui_t *ui;
 	char *key_buf;
+	int wid;
+	int hgt;
 } player_t;
 
 
@@ -36,6 +38,12 @@ void player_set_snake(player_t *p, snake_t *s)
 }
 
 
+static stype_t random_type()
+{
+	return random() % 25;
+}
+
+
 int player_init(player_t **p, game_t *g)
 {
 	*p = malloc(sizeof(player_t));
@@ -43,6 +51,10 @@ int player_init(player_t **p, game_t *g)
 
 	(*p)->key_buf = malloc(sizeof(char));
 
+	int wid = game_get_stage_wid(g);
+	int hgt = game_get_stage_hgt(g);
+
+	snake_init(&(*p)->snake, wid/2, hgt/2, random_type());
 	ui_init(&(*p)->ui, g, *p);
 	return 0;
 }
@@ -62,8 +74,9 @@ char player_get_key(player_t *p)
 
 void player_free(player_t *p)
 {
-	ui_free(p->ui);
 	free(p->key_buf);
+	snake_free(p->snake);
+	ui_free(p->ui);
 	free(p);
 }
 

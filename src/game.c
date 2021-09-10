@@ -9,7 +9,6 @@
 #include "game.h"
 
 typedef struct game {
-	snake_t  *snake;     //snake object
 	char    **stage;
 	char    **stage_cpy; 
 	int       stage_wid;
@@ -27,6 +26,20 @@ typedef struct game {
 static player_t *game_get_player(game_t *g)
 {
 	return g->player;
+}
+
+
+/*TODO*/
+void game_attach_player(game_t *g, player_t *p)
+{
+	g->player = p;
+}
+
+
+/*TODO*/
+void game_detach_player(game_t *g, player_t *p)
+{
+	return;
 }
 
 
@@ -57,18 +70,6 @@ static void stage_free(char **stage, int wid)
 
 
 /******************************************************************/
-
-
-snake_t *game_get_snake(game_t *g)
-{
-	return g->snake;
-}
-
-
-void game_set_snake(game_t *g, snake_t *s)
-{
-	g->snake = s;
-}
 
 
 static char **game_get_stage_cpy(game_t *g)
@@ -157,7 +158,7 @@ static void game_set_foods(game_t *g)
 }
 
 
-static void game_clear_snake(game_t *g)
+static void game_clear_all_snake(game_t *g)
 {
 	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
 	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
@@ -179,14 +180,13 @@ static void game_plot_snake(game_t *g, snake_t *s)
 }
 
 
-static void game_update(game_t *g)
+/*TODO*/
+static void update_snake_and_player(game_t *g, player_t *p)
 {
 
-	snake_t *s = game_get_snake(g);
-	game_clear_snake(g);
+	snake_t *s = player_get_snake(g->player);
 	game_plot_snake(g, s);
-
-	player_update(g->player);
+	player_update(p);
 
 	int vx = snake_get_vx(s);
 	int vy = snake_get_vy(s);
@@ -218,7 +218,7 @@ static void game_update(game_t *g)
 		}
 	}
 
-	switch (player_get_key(g->player)) {
+	switch (player_get_key(p)) {
 	case 'q' : 
 		game_set_active(g, 0);
 		break;
@@ -249,7 +249,21 @@ static void game_update(game_t *g)
 	}
 
 	//clear key buffer
-	player_set_key(g->player, 0);
+	player_set_key(p, 0);
+}
+
+
+
+/*TODO*/
+static void game_update(game_t *g)
+{
+
+	game_clear_all_snake(g);
+
+	player_t *p = game_get_player(g);
+
+	update_snake_and_player(g, p);
+
 }
 
 
@@ -265,9 +279,8 @@ void game_loop(game_t *g)
 void game_result(game_t *g)
 {
 	system("clear");
-
 	printf("game over...\n");
-	printf("your length is %d\n", snake_len(game_get_snake(g)));
+	printf("your length is %d\n", snake_len(player_get_snake(g->player)));
 
 }
 
@@ -282,12 +295,6 @@ int game_update_winsize(game_t *g)
 	game_set_stage_hgt(g, size.ws_row - 2); 
 
 	return 0;
-}
-
-
-static stype_t random_type()
-{
-	return random() % 25;
 }
 
 
@@ -313,14 +320,8 @@ int game_init(game_t **g)
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
 
-	player_init(&(*g)->player, *g);
-
 	if (!(*g)->stage  || !(*g)->stage_cpy) 
 		return 1;
-
-	if (snake_init(&(*g)->snake, wid/2, hgt/2, random_type())) 
-		return 1;
-		
 
 	//after initialized stage, set foods
 	game_set_foods(*g);
@@ -333,12 +334,6 @@ void game_free(game_t *g)
 {
 	stage_free(g->stage, g->stage_wid);
 	stage_free(g->stage_cpy, g->stage_wid);
-
-
-	player_free(g->player);
-
-	snake_free(g->snake);
-
 	free(g);
 }
 

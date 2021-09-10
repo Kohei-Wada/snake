@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "game.h"
+#include "player.h"
 
 
 void usage(void)
@@ -41,15 +42,22 @@ void setup_options(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	game_t *g;
+	player_t *p;
 
 	setup_options(argc, argv);
 
 	if (game_init(&g))
 		return 1;
 
+	player_init(&p, g);
+
+
+	game_attach_player(g, p);
 
 	game_loop(g);
 	game_result(g);
+
+	player_free(p);
 	game_free(g);
 
 	return 0;

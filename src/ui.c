@@ -42,8 +42,10 @@ player_t *ui_get_player(ui_t *ui)
 static void ui_display(ui_t *ui)
 {
 	game_t *g = ui_get_game(ui);
+	player_t *p = ui_get_player(ui);
+
 	char **stage = game_get_stage(g);
-	snake_t *s = game_get_snake(g);
+	snake_t *s = player_get_snake(p);
 
 	for (int y = 0; y < game_get_stage_hgt(g); ++y) {
 
@@ -77,7 +79,7 @@ static void ui_display(ui_t *ui)
 	if (game_get_pause(g))
 		printf("pause : press 'p' to continue\n");
 	else 
-		printf("your length is %d\n", snake_len(game_get_snake(g)));
+		printf("your length is %d\n", snake_len(player_get_snake(p)));
 }
 
 
@@ -102,10 +104,10 @@ int ui_init(ui_t **ui, game_t *g, player_t *p)
 		return 1;
 	}
 
-	
 	ui_set_player((*ui), p);
 	ui_set_game((*ui), g);
 	open_termios();
+
 	return 0;
 }
 
