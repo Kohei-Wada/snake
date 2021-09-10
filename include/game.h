@@ -2,13 +2,12 @@
 #define GAME_H
 
 #include "snake.h"
-#include "ui.h"
+#include "player.h"
 
 
 typedef struct game game_t;
 
-enum {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE, BLACKSNK, REDSNK, GREENSNK, YELLOWSNK, BLUESNK, 
-			MAGENTASNK, CYAANSNK, WHITESNK};
+enum {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE};
 
 
 int game_get_stage_wid(game_t *g);
@@ -21,7 +20,6 @@ void game_set_key(game_t *g, char key);
 char game_current_key(game_t *g);
 void game_stage_size(game_t *g, int *wid, int *hgt);
 void game_set_snake(game_t *g, snake_t *s);
-void game_set_ui(game_t *g, ui_t *ui);
 char **game_get_stage(game_t *g);
 void game_result(game_t *g);
 int game_get_pause(game_t *g);

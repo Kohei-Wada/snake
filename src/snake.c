@@ -144,11 +144,10 @@ void snake_update(snake_t *s)
 	current = list_get(s->l, 0);
 	current->x += s->vx;
 	current->y += s->vy;
-
 }
 
 
-int snake_init(snake_t **s, game_t *g, int x, int y, stype_t type) 
+int snake_init(snake_t **s, int x, int y, stype_t type) 
 {
 	*s = malloc(sizeof(snake_t));
 	if (!(*s)) 

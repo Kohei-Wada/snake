@@ -9,8 +9,6 @@
 #include "game.h"
 
 typedef struct game {
-	char     *key_buf;
-	ui_t     *ui;        //ui object
 	snake_t  *snake;     //snake object
 	char    **stage;
 	char    **stage_cpy; 
@@ -19,10 +17,17 @@ typedef struct game {
 	int       pause;
 	int       active;
 	int       nfoods;
+	player_t *player;
 } game_t;
 
 
 /******************************************************************/
+
+
+static player_t *game_get_player(game_t *g)
+{
+	return g->player;
+}
 
 
 static char **stage_init(int wid, int hgt)
@@ -52,30 +57,6 @@ static void stage_free(char **stage, int wid)
 
 
 /******************************************************************/
-
-
-char game_get_key(game_t *g)
-{
-	return *g->key_buf;
-}
-
-
-void game_set_key(game_t *g, char key) 
-{
-	*g->key_buf = key;
-}
-
-
-void game_set_ui(game_t *g, ui_t *ui)
-{
-	g->ui = ui;
-}
-
-
-ui_t *game_get_ui(game_t *g)
-{
-	return g->ui;
-}
 
 
 snake_t *game_get_snake(game_t *g)
@@ -202,11 +183,10 @@ static void game_update(game_t *g)
 {
 
 	snake_t *s = game_get_snake(g);
-	ui_t *ui = game_get_ui(g);
-
 	game_clear_snake(g);
 	game_plot_snake(g, s);
-	ui_update(ui);
+
+	player_update(g->player);
 
 	int vx = snake_get_vx(s);
 	int vy = snake_get_vy(s);
@@ -238,7 +218,7 @@ static void game_update(game_t *g)
 		}
 	}
 
-	switch (game_get_key(g)) {
+	switch (player_get_key(g->player)) {
 	case 'q' : 
 		game_set_active(g, 0);
 		break;
@@ -269,7 +249,7 @@ static void game_update(game_t *g)
 	}
 
 	//clear key buffer
-	game_set_key(g, 0);
+	player_set_key(g->player, 0);
 }
 
 
@@ -311,16 +291,17 @@ static stype_t random_type()
 }
 
 
+
 int game_init(game_t **g) 
 {
 	srand(time(NULL));
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) 
-		goto error0;
+		return 1;
 
 	if (game_update_winsize(*g))
-		goto error0;
+		return 1;
 
 	int wid = game_get_stage_wid(*g);
 	int hgt = game_get_stage_hgt(*g);
@@ -331,38 +312,20 @@ int game_init(game_t **g)
 
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
-	(*g)->key_buf   = malloc(sizeof(char));
 
-	if (!(*g)->stage  || !(*g)->stage_cpy || !(*g)->key_buf) 
-		goto error1;
+	player_init(&(*g)->player, *g);
 
-	if (snake_init(&(*g)->snake, *g, wid/2, hgt/2, random_type())) 
-		goto error2;
+	if (!(*g)->stage  || !(*g)->stage_cpy) 
+		return 1;
+
+	if (snake_init(&(*g)->snake, wid/2, hgt/2, random_type())) 
+		return 1;
 		
-	if (ui_init(&(*g)->ui, *g)) 
-		goto error3;
-
 
 	//after initialized stage, set foods
 	game_set_foods(*g);
 
 	return 0;
-
-
-  error3:
-	ui_free((*g)->ui);
-  error2:
-	snake_free((*g)->snake);
-
-  error1:
-	free((*g)->stage);
-	free((*g)->stage_cpy);
-	free((*g)->key_buf);
-
-  error0:
-	free(*g);
-
-	return 1;
 }
 
 
@@ -371,9 +334,10 @@ void game_free(game_t *g)
 	stage_free(g->stage, g->stage_wid);
 	stage_free(g->stage_cpy, g->stage_wid);
 
-	free(g->key_buf);
+
+	player_free(g->player);
+
 	snake_free(g->snake);
-	ui_free(g->ui);
 
 	free(g);
 }

@@ -6,10 +6,12 @@
 #include "game.h"
 #include "ui.h"
 #include "snake.h"
+#include "player.h"
 
 
 typedef struct ui {
 	game_t *g;
+	player_t *player;
 } ui_t;
 
 
@@ -23,6 +25,18 @@ void ui_set_game(ui_t *ui, game_t *g)
 {
 	ui->g = g;
 }
+
+void ui_set_player(ui_t *ui, player_t *p)
+{
+	ui->player = p;
+}
+
+
+player_t *ui_get_player(ui_t *ui)
+{
+	return  ui->player;
+}
+
 
 
 static void ui_display(ui_t *ui)
@@ -69,17 +83,17 @@ static void ui_display(ui_t *ui)
 
 void ui_update(ui_t *ui)
 {
-	game_t *g = ui_get_game(ui);
+	player_t *p = ui_get_player(ui);
 
 	system("clear");
 	ui_display(ui);
 
 	if (kbhit()) 
-		game_set_key(g, getch());
+		player_set_key(p, getch());
 }
 
 
-int ui_init(ui_t **ui, game_t *g)
+int ui_init(ui_t **ui, game_t *g, player_t *p)
 {
 
 	*ui = malloc(sizeof(ui_t));
@@ -88,6 +102,8 @@ int ui_init(ui_t **ui, game_t *g)
 		return 1;
 	}
 
+	
+	ui_set_player((*ui), p);
 	ui_set_game((*ui), g);
 	open_termios();
 	return 0;
