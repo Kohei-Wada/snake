@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 
 #include "game.h"
+#include "list.h"
 
 typedef struct game {
 	char    **stage;
@@ -16,32 +17,12 @@ typedef struct game {
 	int       pause;
 	int       active;
 	int       nfoods;
-	player_t *player;
+	list_t   *players;
+	int       nplayers;
 } game_t;
 
 
 /******************************************************************/
-
-
-static player_t *game_get_player(game_t *g)
-{
-	return g->player;
-}
-
-
-/*TODO*/
-void game_attach_player(game_t *g, player_t *p)
-{
-	g->player = p;
-}
-
-
-/*TODO*/
-void game_detach_player(game_t *g, player_t *p)
-{
-	return;
-}
-
 
 static char **stage_init(int wid, int hgt)
 {
@@ -68,9 +49,50 @@ static void stage_free(char **stage, int wid)
 	free(stage);
 }
 
-
 /******************************************************************/
 
+
+
+static void game_set_nplayers(game_t *g, int n)
+{
+	g->nplayers = n;
+}
+
+
+static int game_get_nplayers(game_t *g)
+{
+	return g->nplayers;
+}
+
+
+static list_t *game_get_players(game_t *g)
+{
+	return g->players;
+}
+
+
+static player_t *game_get_player(game_t *g, int i)
+{
+	list_t *players = game_get_players(g);
+	return list_get(players, i);
+}
+
+
+/*TODO*/
+void game_attach_player(game_t *g, player_t *p)
+{
+	list_add_head(g->players, p);
+	g->nplayers++;
+}
+
+
+/*TODO*/
+void game_detach_player(game_t *g, player_t *p)
+{
+	list_delete(g->players, p);
+	g->nplayers--;
+	return;
+}
 
 static char **game_get_stage_cpy(game_t *g)
 {
@@ -171,7 +193,6 @@ static void game_plot_snake(game_t *g, snake_t *s)
 {
 	int x, y;
 	char **stage = game_get_stage(g); 
-
 	for (int i = 0; i < snake_len(s); ++i) {
 		x = snake_get_pos_x(s, i);
 		y = snake_get_pos_y(s, i);
@@ -180,11 +201,10 @@ static void game_plot_snake(game_t *g, snake_t *s)
 }
 
 
-/*TODO*/
+/*TODO fix method name*/
 static void update_snake_and_player(game_t *g, player_t *p)
 {
-
-	snake_t *s = player_get_snake(g->player);
+	snake_t *s = player_get_snake(p);
 	game_plot_snake(g, s);
 	player_update(p);
 
@@ -257,13 +277,12 @@ static void update_snake_and_player(game_t *g, player_t *p)
 /*TODO*/
 static void game_update(game_t *g)
 {
-
 	game_clear_all_snake(g);
 
-	player_t *p = game_get_player(g);
-
-	update_snake_and_player(g, p);
-
+	for (int i = 0; i < game_get_nplayers(g); ++i) {
+		player_t *p = game_get_player(g, 0);
+		update_snake_and_player(g, p);
+	}
 }
 
 
@@ -276,11 +295,14 @@ void game_loop(game_t *g)
 }
 
 
+/*TODO*/
 void game_result(game_t *g)
 {
+	player_t *p = game_get_player(g, 0);
+
 	system("clear");
 	printf("game over...\n");
-	printf("your length is %d\n", snake_len(player_get_snake(g->player)));
+	printf("your length is %d\n", snake_len(player_get_snake(p)));
 
 }
 
@@ -313,9 +335,14 @@ int game_init(game_t **g)
 	int wid = game_get_stage_wid(*g);
 	int hgt = game_get_stage_hgt(*g);
 
+
+	list_init(&(*g)->players);
+
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
 	game_set_nfoods(*g, 10);
+	game_set_nplayers(*g, 0);
+
 
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);
@@ -334,6 +361,7 @@ void game_free(game_t *g)
 {
 	stage_free(g->stage, g->stage_wid);
 	stage_free(g->stage_cpy, g->stage_wid);
+	list_free(g->players);
 	free(g);
 }
 

@@ -15,6 +15,7 @@ int game_get_stage_hgt(game_t *g);
 
 
 void game_attach_player(game_t *g, player_t *p);
+void game_detach_player(game_t *g, player_t *p);
 
 int game_init(game_t **g);
 void game_free(game_t *g);

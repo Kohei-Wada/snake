@@ -57,6 +57,7 @@ int main(int argc, char **argv)
 	game_loop(g);
 	game_result(g);
 
+	game_detach_player(g, p);
 	player_free(p);
 	game_free(g);
 
