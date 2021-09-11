@@ -14,6 +14,7 @@ typedef struct player {
 	snake_t *snake;
 	ui_t *ui;
 	char *key_buf;
+	int (*update)(player_t *p);
 } player_t;
 
 
@@ -83,14 +84,7 @@ void player_result(player_t *p)
 
 
 /*TODO*/
-static stype_t random_type()
-{
-	return random() % 25;
-}
-
-
-/*TODO*/
-int player_update(player_t *p)
+static int player_normal_update(player_t *p)
 {
 	game_t *g = player_get_game(p);
 	snake_t *s = player_get_snake(p);
@@ -121,6 +115,19 @@ int player_update(player_t *p)
 }
 
 
+int player_update(player_t *p)
+{
+	return p->update(p);
+}
+
+
+/*TODO*/
+static stype_t random_type()
+{
+	return random() % 25;
+}
+
+
 int player_init(player_t **p, game_t *g, const char *name)
 {
 	*p = malloc(sizeof(player_t));
@@ -130,6 +137,9 @@ int player_init(player_t **p, game_t *g, const char *name)
 	(*p)->name = name;
 
 	board_t *b = game_get_board(g);
+	(*p)->update = player_normal_update;
+
+
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);
 

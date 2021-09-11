@@ -18,4 +18,5 @@ void player_free(player_t *p);
 int player_update(player_t *p);
 void player_result(player_t *p);
 
+
 #endif
