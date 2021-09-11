@@ -13,7 +13,6 @@ typedef struct game {
 	list_t   *players;
 	board_t  *board;
 	int       pause;
-	int       active;
 	int       nfoods;
 	int       nplayers;
 } game_t;
@@ -41,19 +40,6 @@ board_t *game_get_board(game_t *g)
 static int game_get_nplayers(game_t *g)
 {
 	return g->nplayers;
-}
-
-
-
-void game_set_active(game_t *g, int a)
-{
-	g->active = a;
-}
-
-
-int game_get_active(game_t *g)
-{
-	return g->active;
 }
 
 
@@ -155,7 +141,6 @@ int game_init(game_t **g)
 	list_init(&(*g)->players);
 	board_init(&(*g)->board, wid, hgt);
 
-	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
 	(*g)->nplayers = 0;
 
