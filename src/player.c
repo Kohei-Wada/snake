@@ -47,6 +47,11 @@ void player_set_game(player_t *p, game_t *g)
 	p->game = g;
 }
 
+board_t *player_get_board(player_t *p)
+{
+	game_t *g = player_get_game(p);
+	return game_get_board(g);
+}
 
 
 snake_t *player_get_snake(player_t *p)
@@ -73,42 +78,26 @@ int player_update(player_t *p)
 	snake_t *s = player_get_snake(p);
 	board_t *b = game_get_board(g);
 
+	/*XXX*/
+	board_plot_snake(b, s);
+	ui_update(p->ui);
+
 	if (!game_get_pause(g)) 
 		if (board_put_snake(b, s))
 			game_set_active(g, 0);
-
-	int vx = snake_get_vx(s);
-	int vy = snake_get_vy(s);
 
 	//update snake v
 	switch (player_get_key(p)) {
 	case 'q' : game_set_active(g, 0); break;
 	case 'p' : game_set_pause(g, !game_get_pause(g)); break;
-
-	case 'a' : 
-		if (vx != 1) 
-			snake_set_v(s, -1, 0); 
-		break;
-	case 'f' : 
-		if (vx != -1)
-			snake_set_v(s, 1 , 0); 
-		break;
-	case 'e' : 
-		if (vy != 1)
-			snake_set_v(s, 0, -1); 
-		break; 
-	case 'd' : 
-		if (vy != -1)
-			snake_set_v(s, 0, 1); 
-		break;
+	case 'a' : snake_set_v(s, -1, 0);  break;
+	case 'f' : snake_set_v(s, 1 , 0);  break;
+	case 'e' : snake_set_v(s, 0, -1); break; 
+	case 'd' : snake_set_v(s, 0, 1); break;
 	}
 
 	//clear key buffer
 	player_set_key(p, 0);
-
-	board_plot_snake(b, s);
-	ui_update(p->ui);
-
 	return 0;
 }
 

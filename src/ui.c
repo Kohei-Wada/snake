@@ -3,7 +3,6 @@
 #include <unistd.h>
 
 #include "getch.h"
-#include "game.h"
 #include "ui.h"
 #include "snake.h"
 #include "player.h"
@@ -11,21 +10,9 @@
 
 
 typedef struct ui {
-	game_t *g;
 	player_t *player;
 } ui_t;
 
-
-static game_t* ui_get_game(ui_t *ui)
-{
-	return ui->g;
-}
-
-
-void ui_set_game(ui_t *ui, game_t *g)
-{
-	ui->g = g;
-}
 
 void ui_set_player(ui_t *ui, player_t *p)
 {
@@ -42,10 +29,8 @@ player_t *ui_get_player(ui_t *ui)
 
 static void ui_display(ui_t *ui)
 {
-	game_t *g = ui_get_game(ui);
 	player_t *p = ui_get_player(ui);
-	board_t *b = game_get_board(g);
-
+	board_t *b = player_get_board(p);
 
 	char **stage = board_get_array(b);
 	snake_t *s = player_get_snake(p);
@@ -72,17 +57,14 @@ static void ui_display(ui_t *ui)
 				break;
 
 			case SNAKE:
-				printf("%s", snake_get_type(s));
+				printf("%s", snake_get_shape(s));
 				break;
 			}
 		}
 		printf("\n");
 	}
 
-	if (game_get_pause(g))
-		printf("pause : press 'p' to continue\n");
-	else 
-		printf("your length is %d\n", snake_len(player_get_snake(p)));
+	printf("your length is %d\n", snake_len(player_get_snake(p)));
 }
 
 
@@ -108,7 +90,6 @@ int ui_init(ui_t **ui, game_t *g, player_t *p)
 	}
 
 	ui_set_player((*ui), p);
-	ui_set_game((*ui), g);
 	open_termios();
 
 	return 0;

@@ -125,7 +125,7 @@ int board_put_snake(board_t *b, snake_t *s)
 		break;
 	
 	default:
-		//dead
+		//failed
 		return 1;
 	}
 

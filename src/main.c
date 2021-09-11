@@ -51,7 +51,6 @@ int main(int argc, char **argv)
 
 	player_init(&p, g);
 
-
 	game_attach_player(g, p);
 
 	game_loop(g);

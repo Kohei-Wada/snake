@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "list.h"
 #include "snake.h"
 
 typedef struct position {
@@ -74,14 +75,21 @@ void snake_set_vy(snake_t *s, int v)
 }
 
 
-void snake_set_v(snake_t *s, int vx, int vy)
+void snake_set_v(snake_t *s, int tvx, int tvy)
 {
-	s->vx = vx;
-	s->vy = vy;
+	int vx = snake_get_vx(s);
+	int vy = snake_get_vy(s);
+
+	//can not move backword or diagonally.
+	if (tvx * tvy != 0 || tvx * vx < 0 || tvy * vy < 0)
+		return;
+
+	snake_set_vx(s, tvx);
+	snake_set_vy(s, tvy);
 }
 
 
-const char *stype[] = {
+const char *snake_shape[] = {
 	"\e[30mo\e[0m",
 	"\e[31mo\e[0m",
 	"\e[32mo\e[0m",
@@ -111,15 +119,21 @@ const char *stype[] = {
 };
 
 
-const char *snake_get_type(snake_t *s)
+const char *snake_get_shape(snake_t *s)
 {
 	stype_t type = s->type;
 
 	if (type == RAINBOW)
-		return stype[random()%23];
+		return snake_shape[random()%23];
 	else 
-		return stype[type];
+		return snake_shape[type];
 }
+
+stype_t snake_get_type(snake_t *s)
+{
+	return s->type;
+}
+
 
 void snake_set_type(snake_t *s, stype_t t)
 {
