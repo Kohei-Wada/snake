@@ -31,14 +31,12 @@ static void ui_display(ui_t *ui)
 	player_t *p = ui_get_player(ui);
 	board_t *b = player_get_board(p);
 
-	char **stage = board_get_array(b);
 	snake_t *s = player_get_snake(p);
 
 	for (int y = 0; y < board_get_hgt(b); ++y) {
-
 		for (int x = 0; x < board_get_wid(b); ++x) {
 
-			switch (stage[x][y]) {
+			switch (board_get_element_type(b, x, y)) {
 			case FIELD: 
 				printf(" ");
 				break;
