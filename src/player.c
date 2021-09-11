@@ -3,6 +3,7 @@
 #include "player.h"
 #include "ui.h"
 #include "snake.h"
+#include "board.h"
 
 typedef struct player {
 	game_t *game;
@@ -61,8 +62,9 @@ int player_update(player_t *p)
 {
 	game_t *g = player_get_game(p);
 	snake_t *s = player_get_snake(p);
+	board_t *b = game_get_board(g);
 
-	game_plot_snake(g, s);
+	board_plot_snake(b, s);
 
 	ui_update(p->ui);
 
@@ -74,8 +76,8 @@ int player_update(player_t *p)
 
 	//check if snake is dead
 	if (!game_get_pause(g)) {
-		char **stage = game_get_stage(g);
-		char **cpy   = game_get_stage_cpy(g);
+		char **stage = board_get_array(b);
+		char **cpy   = board_get_array_cpy(b);
 		
 		switch (stage[tmpx][tmpy]) {
 		case FIELD : 
@@ -85,7 +87,7 @@ int player_update(player_t *p)
 		case FOOD: 
 			cpy[tmpx][tmpy] = FIELD;
 			snake_add(s, tmpx, tmpy);
-			game_set_food(g);
+			board_set_food(b);
 			break;
 		
 		default:
@@ -95,6 +97,7 @@ int player_update(player_t *p)
 		}
 	}
 
+	//update snake v
 	switch (player_get_key(p)) {
 	case 'q' : game_set_active(g, 0); break;
 	case 'p' : game_set_pause(g, !game_get_pause(g)); break;
@@ -131,8 +134,9 @@ int player_init(player_t **p, game_t *g)
 
 	(*p)->key_buf = malloc(sizeof(char));
 
-	int wid = game_get_stage_wid(g);
-	int hgt = game_get_stage_hgt(g);
+	board_t *b = game_get_board(g);
+	int wid = board_get_wid(b);
+	int hgt = board_get_hgt(b);
 
 	snake_init(&(*p)->snake, wid/2, hgt/2, random_type());
 	ui_init(&(*p)->ui, g, *p);

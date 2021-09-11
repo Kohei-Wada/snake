@@ -6,6 +6,7 @@
 
 
 typedef struct game game_t;
+typedef struct board board_t;
 
 enum {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE};
 
@@ -14,6 +15,7 @@ int game_get_stage_wid(game_t *g);
 int game_get_stage_hgt(game_t *g);
 
 
+board_t *game_get_board(game_t *g);
 
 /*TODO make board object*/
 void game_set_nfoods(game_t *g, int n);

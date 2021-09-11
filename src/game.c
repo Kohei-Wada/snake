@@ -6,50 +6,25 @@
 #include <time.h>
 #include <sys/ioctl.h>
 
+#include "board.h"
 #include "game.h"
 #include "list.h"
 
+
 typedef struct game {
-	char    **stage;
-	char    **stage_cpy; 
-	int       stage_wid;
-	int       stage_hgt;
+	list_t   *players;
+	int       nplayers;
+	board_t  *board;
 	int       pause;
 	int       active;
 	int       nfoods;
-	list_t   *players;
-	int       nplayers;
 } game_t;
 
 
-/******************************************************************/
-
-static char **stage_init(int wid, int hgt)
+board_t *game_get_board(game_t *g)
 {
-	char **stage = malloc(sizeof(char *) * wid);
-
-	for (int i = 0; i < wid; ++i) 
-		stage[i] = malloc(sizeof(char) * hgt);
-
-	for (int y = 0; y < hgt; ++y) 
-		stage[0][y] = stage[wid - 1][y] = WALL_V;
-
-	for (int x = 0; x < wid; ++x)
-		stage[x][0] = stage[x][hgt - 1] = WALL_H;
-
-	return stage;
+	return g->board;
 }
-
-
-static void stage_free(char **stage, int wid)
-{
-	for (int i = 0; i < wid; ++i)
-		free(stage[i]);
-
-	free(stage);
-}
-
-/******************************************************************/
 
 
 static void game_set_nplayers(game_t *g, int n)
@@ -91,40 +66,6 @@ void game_detach_player(game_t *g, player_t *p)
 }
 
 
-char **game_get_stage_cpy(game_t *g)
-{
-	return g->stage_cpy;
-}
-
-
-char **game_get_stage(game_t *g)
-{
-	return g->stage;
-}
-
-
-void game_set_stage_wid(game_t *g, int wid)
-{
-	g->stage_wid = wid;
-}
-
-
-int game_get_stage_wid(game_t *g)
-{
-	return g->stage_wid;
-}
-
-
-void game_set_stage_hgt(game_t *g, int hgt)
-{
-	g->stage_hgt = hgt;
-}
-
-
-int game_get_stage_hgt(game_t *g)
-{
-	return g->stage_hgt;
-}
 
 
 void game_set_active(game_t *g, int a)
@@ -163,46 +104,10 @@ void game_set_nfoods(game_t *g, int n)
 }
 
 
-void game_set_food(game_t *g)
-{
-	char **stage = g->stage_cpy;
-	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
-}
-
-
-void game_set_foods(game_t *g)
-{
-	for (int i = 0; i < game_get_nfoods(g) ; ++i)
-		game_set_food(g);
-}
-
-
-static void game_clear_all_snake(game_t *g)
-{
-	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
-	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
-
-	for (i = 0; i < wid; ++i) 
-		memcpy(stage[i], cpy[i], sizeof(char) * hgt);
-}
-
-
-void game_plot_snake(game_t *g, snake_t *s)
-{
-	int x, y;
-	char **stage = game_get_stage(g); 
-	for (int i = 0; i < snake_len(s); ++i) {
-		x = snake_get_pos_x(s, i);
-		y = snake_get_pos_y(s, i);
-		stage[x][y] = SNAKE;
-	}
-}
-
-
 /*TODO*/
 static void game_update(game_t *g)
 {
-	game_clear_all_snake(g);
+	board_clear(g->board);
 
 	//update each player
 	for (int i = 0; i < game_get_nplayers(g); ++i) {
@@ -232,14 +137,15 @@ void game_result(game_t *g)
 }
 
 
-int game_update_winsize(game_t *g)
+/*TODO*/
+int game_update_winsize(game_t *g, int *wid, int *hgt)
 {
 	struct winsize size;
 	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
 		return 1;
 
-	game_set_stage_wid(g, size.ws_col); 
-	game_set_stage_hgt(g, size.ws_row - 2); 
+	*wid = size.ws_col;
+	*hgt = size.ws_row - 2; 
 
 	return 0;
 }
@@ -247,33 +153,26 @@ int game_update_winsize(game_t *g)
 
 int game_init(game_t **g) 
 {
+	int wid, hgt;
 	srand(time(NULL));
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) 
 		return 1;
 
-	if (game_update_winsize(*g))
+	if (game_update_winsize(*g, &wid, &hgt))
 		return 1;
-
-	int wid = game_get_stage_wid(*g);
-	int hgt = game_get_stage_hgt(*g);
 
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
-	game_set_nfoods(*g, 10);
 	game_set_nplayers(*g, 0);
 
 	list_init(&(*g)->players);
+	board_init(&(*g)->board, wid, hgt);
 
-	(*g)->stage     = stage_init(wid, hgt);
-	(*g)->stage_cpy = stage_init(wid, hgt);
-
-	if (!(*g)->stage  || !(*g)->stage_cpy) 
-		return 1;
 
 	//after initialized stage, set foods
-	game_set_foods(*g);
+	board_set_foods((*g)->board, 10);
 
 	return 0;
 }
@@ -281,9 +180,8 @@ int game_init(game_t **g)
 
 void game_free(game_t *g)
 {
-	stage_free(g->stage, g->stage_wid);
-	stage_free(g->stage_cpy, g->stage_wid);
 	list_free(g->players);
+	board_free(g->board);
 	free(g);
 }
 

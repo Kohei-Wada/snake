@@ -7,6 +7,7 @@
 #include "ui.h"
 #include "snake.h"
 #include "player.h"
+#include "board.h"
 
 
 typedef struct ui {
@@ -43,13 +44,15 @@ static void ui_display(ui_t *ui)
 {
 	game_t *g = ui_get_game(ui);
 	player_t *p = ui_get_player(ui);
+	board_t *b = game_get_board(g);
 
-	char **stage = game_get_stage(g);
+
+	char **stage = board_get_array(b);
 	snake_t *s = player_get_snake(p);
 
-	for (int y = 0; y < game_get_stage_hgt(g); ++y) {
+	for (int y = 0; y < board_get_hgt(b); ++y) {
 
-		for (int x = 0; x < game_get_stage_wid(g); ++x) {
+		for (int x = 0; x < board_get_wid(b); ++x) {
 
 			switch (stage[x][y]) {
 			case FIELD: 
