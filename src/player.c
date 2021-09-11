@@ -16,6 +16,8 @@ typedef struct player {
 	char *key_buf;
 } player_t;
 
+
+
 void player_set_name(player_t *p, const char *name)
 {
 	p->name = name;
@@ -34,15 +36,6 @@ void player_set_key(player_t *p, char key)
 }
 
 
-void player_result(player_t *p)
-{
-	system("clear");
-	printf("game over...\n");
-	printf("name   : %s\n", player_get_name(p));
-	printf("length : %d\n", snake_len(player_get_snake(p)));
-}
-
-
 char player_get_key(player_t *p)
 {
 	return *p->key_buf;
@@ -54,6 +47,7 @@ ui_t *player_get_ui(player_t *p)
 	return p->ui;
 }
 
+
 game_t *player_get_game(player_t *p)
 {
 	return p->game;
@@ -64,6 +58,7 @@ void player_set_game(player_t *p, game_t *g)
 {
 	p->game = g;
 }
+
 
 board_t *player_get_board(player_t *p)
 {
@@ -78,9 +73,12 @@ snake_t *player_get_snake(player_t *p)
 }
 
 
-void player_set_snake(player_t *p, snake_t *s)
+void player_result(player_t *p)
 {
-	p->snake = s;
+	system("clear");
+	printf("game over...\n");
+	printf("name   : %s\n", player_get_name(p));
+	printf("length : %d\n", snake_len(player_get_snake(p)));
 }
 
 

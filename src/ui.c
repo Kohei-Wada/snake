@@ -25,7 +25,7 @@ player_t *ui_get_player(ui_t *ui)
 }
 
 
-
+/*TODO feeld elements needs to be modified.*/
 static void ui_display(ui_t *ui)
 {
 	player_t *p = ui_get_player(ui);
