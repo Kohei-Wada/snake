@@ -1,8 +1,9 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "list.h"
 #include "snake.h"
+
+
 
 typedef struct position {
 	int x, y;
@@ -173,13 +174,14 @@ int snake_init(snake_t **s, int x, int y, stype_t type)
 	if (!(*s)) 
 		goto error0;
 
+	if (list_init(&(*s)->l)) 
+		goto error1;
+
 	snake_set_len(*s, 0);
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
 	snake_set_type(*s, type);
 
-	if (list_init(&(*s)->l)) 
-		goto error1;
 
 	snake_add(*s, x, y);
 	return 0;

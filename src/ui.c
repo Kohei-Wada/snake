@@ -1,9 +1,8 @@
 #include <stdlib.h> 
 #include <stdio.h>
-#include <unistd.h>
 
-#include "getch.h"
 #include "ui.h"
+#include "getch.h"
 #include "snake.h"
 #include "player.h"
 #include "board.h"

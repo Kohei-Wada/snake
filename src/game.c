@@ -1,9 +1,6 @@
 #include <stdlib.h> 
 #include <time.h>
-#include <string.h>
-#include <stdio.h>
 #include <unistd.h>
-#include <time.h>
 #include <sys/ioctl.h>
 
 #include "game.h"
@@ -14,30 +11,12 @@
 
 typedef struct game {
 	list_t   *players;
-	int       nplayers;
 	board_t  *board;
 	int       pause;
 	int       active;
 	int       nfoods;
+	int       nplayers;
 } game_t;
-
-
-board_t *game_get_board(game_t *g)
-{
-	return g->board;
-}
-
-
-static void game_set_nplayers(game_t *g, int n)
-{
-	g->nplayers = n;
-}
-
-
-static int game_get_nplayers(game_t *g)
-{
-	return g->nplayers;
-}
 
 
 static list_t *game_get_players(game_t *g)
@@ -53,18 +32,17 @@ static player_t *game_get_player(game_t *g, int i)
 }
 
 
-void game_attach_player(game_t *g, player_t *p)
+board_t *game_get_board(game_t *g)
 {
-	list_add_head(g->players, p);
-	g->nplayers++;
+	return g->board;
 }
 
 
-void game_detach_player(game_t *g, player_t *p)
+static int game_get_nplayers(game_t *g)
 {
-	list_delete(g->players, p);
-	g->nplayers--;
+	return g->nplayers;
 }
+
 
 
 void game_set_active(game_t *g, int a)
@@ -103,9 +81,25 @@ void game_set_nfoods(game_t *g, int n)
 }
 
 
+void game_attach_player(game_t *g, player_t *p)
+{
+	list_add_head(g->players, p);
+	g->nplayers++;
+}
+
+
+void game_detach_player(game_t *g, player_t *p)
+{
+	list_delete(g->players, p);
+	g->nplayers--;
+}
+
+
 static void game_update(game_t *g)
 {
 	board_t *b = game_get_board(g);
+
+	//clear all snakes
 	board_clear(b);
 
 	//update each player
@@ -163,7 +157,7 @@ int game_init(game_t **g)
 
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
-	game_set_nplayers(*g, 0);
+	(*g)->nplayers = 0;
 
 	/*TODO*/
 	game_set_nfoods(*g, 10);

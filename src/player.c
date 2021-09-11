@@ -36,6 +36,11 @@ char player_get_key(player_t *p)
 }
 
 
+ui_t *player_get_ui(player_t *p)
+{
+	return p->ui;
+}
+
 game_t *player_get_game(player_t *p)
 {
 	return p->game;
@@ -66,27 +71,30 @@ void player_set_snake(player_t *p, snake_t *s)
 }
 
 
+/*TODO*/
 static stype_t random_type()
 {
 	return random() % 25;
 }
 
 
+/*TODO*/
 int player_update(player_t *p)
 {
 	game_t *g = player_get_game(p);
 	snake_t *s = player_get_snake(p);
 	board_t *b = game_get_board(g);
+	ui_t *ui = player_get_ui(p);
 
-	/*XXX*/
+	/*warning*/
 	board_plot_snake(b, s);
-	ui_update(p->ui);
+	ui_update(ui);
 
 	if (!game_get_pause(g)) 
 		if (board_put_snake(b, s))
 			game_set_active(g, 0);
 
-	//update snake v
+
 	switch (player_get_key(p)) {
 	case 'q' : game_set_active(g, 0); break;
 	case 'p' : game_set_pause(g, !game_get_pause(g)); break;

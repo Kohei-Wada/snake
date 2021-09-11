@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "game.h"
 #include "player.h"
