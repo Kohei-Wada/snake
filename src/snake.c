@@ -3,6 +3,11 @@
 
 #include "snake.h"
 
+typedef struct position {
+	int x, y;
+} pos_t;
+
+
 typedef struct snake {
 	list_t *l;
 	int len;

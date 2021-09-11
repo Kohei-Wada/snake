@@ -6,9 +6,10 @@
 #include <time.h>
 #include <sys/ioctl.h>
 
-#include "board.h"
 #include "game.h"
+#include "board.h"
 #include "list.h"
+#include "player.h"
 
 
 typedef struct game {
@@ -66,8 +67,6 @@ void game_detach_player(game_t *g, player_t *p)
 }
 
 
-
-
 void game_set_active(game_t *g, int a)
 {
 	g->active = a;
@@ -104,10 +103,10 @@ void game_set_nfoods(game_t *g, int n)
 }
 
 
-/*TODO*/
 static void game_update(game_t *g)
 {
-	board_clear(g->board);
+	board_t *b = game_get_board(g);
+	board_clear(b);
 
 	//update each player
 	for (int i = 0; i < game_get_nplayers(g); ++i) {
@@ -116,24 +115,21 @@ static void game_update(game_t *g)
 	}
 }
 
-
 void game_loop(game_t *g)
 {
+	board_t *b = game_get_board(g);
+	board_set_foods(b, game_get_nfoods(g));
+
 	while (game_get_active(g)) {
 		game_update(g);
 		usleep(70000);
 	}
 }
 
-
 /*TODO*/
-void game_result(game_t *g)
+void game_result(game_t *g, player_t *p)
 {
-	player_t *p = game_get_player(g, 0);
-
-	system("clear");
-	printf("game over...\n");
-	printf("your length is %d\n", snake_len(player_get_snake(p)));
+	return;
 }
 
 
@@ -162,17 +158,16 @@ int game_init(game_t **g)
 
 	if (game_update_winsize(*g, &wid, &hgt))
 		return 1;
+	list_init(&(*g)->players);
+	board_init(&(*g)->board, wid, hgt);
 
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
 	game_set_nplayers(*g, 0);
 
-	list_init(&(*g)->players);
-	board_init(&(*g)->board, wid, hgt);
+	/*TODO*/
+	game_set_nfoods(*g, 10);
 
-
-	//after initialized stage, set foods
-	board_set_foods((*g)->board, 10);
 
 	return 0;
 }

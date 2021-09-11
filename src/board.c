@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "game.h" // TODO move field elements
 #include "board.h"
 #include "snake.h"
 
@@ -102,6 +101,35 @@ void board_clear(board_t *b)
 
 	for (i = 0; i < wid; ++i) 
 		memcpy(array[i], cpy[i], sizeof(char) * hgt);
+}
+
+
+int board_put_snake(board_t *b, snake_t *s)
+{
+	//snake's next head position
+	int tmpx = snake_get_pos_x(s, 0) + snake_get_vx(s);
+	int tmpy = snake_get_pos_y(s, 0) + snake_get_vy(s);
+
+	char **array = board_get_array(b);
+	char **cpy   = board_get_array_cpy(b);
+	
+	switch (array[tmpx][tmpy]) {
+	case FIELD : 
+		snake_update(s);
+		break;
+
+	case FOOD: 
+		cpy[tmpx][tmpy] = FIELD;
+		snake_add(s, tmpx, tmpy);
+		board_set_food(b);
+		break;
+	
+	default:
+		//dead
+		return 1;
+	}
+
+	return 0;
 }
 
 

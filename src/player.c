@@ -1,23 +1,32 @@
+#include <stdio.h>
 #include <stdlib.h>
+
 #include "game.h"
 #include "player.h"
 #include "ui.h"
 #include "snake.h"
 #include "board.h"
 
+
 typedef struct player {
 	game_t *game;
 	snake_t *snake;
 	ui_t *ui;
 	char *key_buf;
-	int wid;
-	int hgt;
 } player_t;
 
 
 void player_set_key(player_t *p, char key)
 {
 	*p->key_buf = key;
+}
+
+
+void player_result(player_t *p)
+{
+	system("clear");
+	printf("game over...\n");
+	printf("your length is %d\n", snake_len(player_get_snake(p)));
 }
 
 
@@ -39,6 +48,7 @@ void player_set_game(player_t *p, game_t *g)
 }
 
 
+
 snake_t *player_get_snake(player_t *p)
 {
 	return p->snake;
@@ -57,45 +67,18 @@ static stype_t random_type()
 }
 
 
-/*TODO make board object*/
 int player_update(player_t *p)
 {
 	game_t *g = player_get_game(p);
 	snake_t *s = player_get_snake(p);
 	board_t *b = game_get_board(g);
 
-	board_plot_snake(b, s);
-
-	ui_update(p->ui);
+	if (!game_get_pause(g)) 
+		if (board_put_snake(b, s))
+			game_set_active(g, 0);
 
 	int vx = snake_get_vx(s);
 	int vy = snake_get_vy(s);
-
-	int tmpx = snake_get_pos_x(s, 0) + vx;
-	int tmpy = snake_get_pos_y(s, 0) + vy;
-
-	//check if snake is dead
-	if (!game_get_pause(g)) {
-		char **stage = board_get_array(b);
-		char **cpy   = board_get_array_cpy(b);
-		
-		switch (stage[tmpx][tmpy]) {
-		case FIELD : 
-			snake_update(s);
-			break;
-
-		case FOOD: 
-			cpy[tmpx][tmpy] = FIELD;
-			snake_add(s, tmpx, tmpy);
-			board_set_food(b);
-			break;
-		
-		default:
-			//dead
-			game_set_active(g, 0);
-			break;
-		}
-	}
 
 	//update snake v
 	switch (player_get_key(p)) {
@@ -122,6 +105,9 @@ int player_update(player_t *p)
 
 	//clear key buffer
 	player_set_key(p, 0);
+
+	board_plot_snake(b, s);
+	ui_update(p->ui);
 
 	return 0;
 }
