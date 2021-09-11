@@ -114,7 +114,7 @@ void game_loop(game_t *g)
 	board_t *b = game_get_board(g);
 	board_set_foods(b, game_get_nfoods(g));
 
-	while (game_get_active(g)) {
+	while (game_get_nplayers(g) > 0) {
 		game_update(g);
 		usleep(70000);
 	}

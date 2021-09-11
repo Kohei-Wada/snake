@@ -47,14 +47,15 @@ int main(int argc, char **argv)
 	if (game_init(&g))
 		return 1;
 
-	player_init(&p, g);
+	player_init(&p, g, "player1");
 
 	game_attach_player(g, p);
 
 	game_loop(g);
+
 	player_result(p);
 
-	game_detach_player(g, p);
+
 	player_free(p);
 	game_free(g);
 
