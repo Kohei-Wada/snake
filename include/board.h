@@ -8,9 +8,6 @@ typedef enum elem_type etype_t;
 typedef struct snake snake_t;
 typedef struct board board_t;
 
-char **board_get_array_cpy(board_t *b);
-char **board_get_array(board_t *b);
-
 int board_put_snake(board_t *b, snake_t *s);
 
 int board_get_wid(board_t *b);
@@ -26,4 +23,6 @@ int board_init(board_t **b, int wid, int hgt);
 void board_free(board_t *b);
 
 etype_t board_get_element_type(board_t *b, int x, int y);
+snake_t *board_get_snake(board_t *b, int x, int y);
+
 #endif
