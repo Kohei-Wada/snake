@@ -14,6 +14,18 @@ typedef struct player {
 } player_t;
 
 
+void player_set_key(player_t *p, char key)
+{
+	*p->key_buf = key;
+}
+
+
+char player_get_key(player_t *p)
+{
+	return *p->key_buf;
+}
+
+
 game_t *player_get_game(player_t *p)
 {
 	return p->game;
@@ -44,6 +56,74 @@ static stype_t random_type()
 }
 
 
+/*TODO make board object*/
+int player_update(player_t *p)
+{
+	game_t *g = player_get_game(p);
+	snake_t *s = player_get_snake(p);
+
+	game_plot_snake(g, s);
+
+	ui_update(p->ui);
+
+	int vx = snake_get_vx(s);
+	int vy = snake_get_vy(s);
+
+	int tmpx = snake_get_pos_x(s, 0) + vx;
+	int tmpy = snake_get_pos_y(s, 0) + vy;
+
+	//check if snake is dead
+	if (!game_get_pause(g)) {
+		char **stage = game_get_stage(g);
+		char **cpy   = game_get_stage_cpy(g);
+		
+		switch (stage[tmpx][tmpy]) {
+		case FIELD : 
+			snake_update(s);
+			break;
+
+		case FOOD: 
+			cpy[tmpx][tmpy] = FIELD;
+			snake_add(s, tmpx, tmpy);
+			game_set_food(g);
+			break;
+		
+		default:
+			//dead
+			game_set_active(g, 0);
+			break;
+		}
+	}
+
+	switch (player_get_key(p)) {
+	case 'q' : game_set_active(g, 0); break;
+	case 'p' : game_set_pause(g, !game_get_pause(g)); break;
+
+	case 'a' : 
+		if (vx != 1) 
+			snake_set_v(s, -1, 0); 
+		break;
+	case 'f' : 
+		if (vx != -1)
+			snake_set_v(s, 1 , 0); 
+		break;
+	case 'e' : 
+		if (vy != 1)
+			snake_set_v(s, 0, -1); 
+		break; 
+	case 'd' : 
+		if (vy != -1)
+			snake_set_v(s, 0, 1); 
+		break;
+	}
+
+	//clear key buffer
+	player_set_key(p, 0);
+
+	return 0;
+}
+
+
 int player_init(player_t **p, game_t *g)
 {
 	*p = malloc(sizeof(player_t));
@@ -60,18 +140,6 @@ int player_init(player_t **p, game_t *g)
 }
 
 
-void player_set_key(player_t *p, char key)
-{
-	*p->key_buf = key;
-}
-
-
-char player_get_key(player_t *p)
-{
-	return *p->key_buf;
-}
-
-
 void player_free(player_t *p)
 {
 	free(p->key_buf);
@@ -81,8 +149,3 @@ void player_free(player_t *p)
 }
 
 
-int player_update(player_t *p)
-{
-	ui_update(p->ui);
-	return 0;
-}

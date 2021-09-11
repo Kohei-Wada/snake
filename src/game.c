@@ -52,7 +52,6 @@ static void stage_free(char **stage, int wid)
 /******************************************************************/
 
 
-
 static void game_set_nplayers(game_t *g, int n)
 {
 	g->nplayers = n;
@@ -78,7 +77,6 @@ static player_t *game_get_player(game_t *g, int i)
 }
 
 
-/*TODO*/
 void game_attach_player(game_t *g, player_t *p)
 {
 	list_add_head(g->players, p);
@@ -86,15 +84,14 @@ void game_attach_player(game_t *g, player_t *p)
 }
 
 
-/*TODO*/
 void game_detach_player(game_t *g, player_t *p)
 {
 	list_delete(g->players, p);
 	g->nplayers--;
-	return;
 }
 
-static char **game_get_stage_cpy(game_t *g)
+
+char **game_get_stage_cpy(game_t *g)
 {
 	return g->stage_cpy;
 }
@@ -166,14 +163,14 @@ void game_set_nfoods(game_t *g, int n)
 }
 
 
-static void game_set_food(game_t *g)
+void game_set_food(game_t *g)
 {
 	char **stage = g->stage_cpy;
 	stage[rand() % (g->stage_wid - 2) + 1][rand() % (g->stage_hgt - 2) + 1] = FOOD;
 }
 
 
-static void game_set_foods(game_t *g)
+void game_set_foods(game_t *g)
 {
 	for (int i = 0; i < game_get_nfoods(g) ; ++i)
 		game_set_food(g);
@@ -184,12 +181,13 @@ static void game_clear_all_snake(game_t *g)
 {
 	int i, wid = game_get_stage_wid(g), hgt = game_get_stage_hgt(g);
 	char **stage = game_get_stage(g), **cpy = game_get_stage_cpy(g);
+
 	for (i = 0; i < wid; ++i) 
 		memcpy(stage[i], cpy[i], sizeof(char) * hgt);
 }
 
 
-static void game_plot_snake(game_t *g, snake_t *s)
+void game_plot_snake(game_t *g, snake_t *s)
 {
 	int x, y;
 	char **stage = game_get_stage(g); 
@@ -201,87 +199,15 @@ static void game_plot_snake(game_t *g, snake_t *s)
 }
 
 
-/*TODO fix method name*/
-static void update_snake_and_player(game_t *g, player_t *p)
-{
-	snake_t *s = player_get_snake(p);
-	game_plot_snake(g, s);
-	player_update(p);
-
-	int vx = snake_get_vx(s);
-	int vy = snake_get_vy(s);
-
-	int tmpx = snake_get_pos_x(s, 0) + vx;
-	int tmpy = snake_get_pos_y(s, 0) + vy;
-	
-
-	//check if snake is dead
-	if (!game_get_pause(g)) {
-		char **stage = game_get_stage(g);
-		char **cpy = game_get_stage_cpy(g);
-		
-		switch (stage[tmpx][tmpy]) {
-		case FIELD : 
-			snake_update(s);
-			break;
-
-		case FOOD: 
-			cpy[tmpx][tmpy] = FIELD;
-			snake_add(s, tmpx, tmpy);
-			game_set_food(g);
-			break;
-		
-		default:
-			//dead
-			game_set_active(g, 0);
-			break;
-		}
-	}
-
-	switch (player_get_key(p)) {
-	case 'q' : 
-		game_set_active(g, 0);
-		break;
-
-	case 'p' :
-		game_set_pause(g, !game_get_pause(g));
-		break;
-
-	case 'a' : 
-		if (vx != 1) 
-			snake_set_v(s, -1, 0); 
-		break;
-
-	case 'f' : 
-		if (vx != -1)
-			snake_set_v(s, 1 , 0); 
-		break;
-
-	case 'e' : 
-		if (vy != 1)
-			snake_set_v(s, 0, -1); 
-		break; 
-
-	case 'd' : 
-		if (vy != -1)
-			snake_set_v(s, 0, 1); 
-		break;
-	}
-
-	//clear key buffer
-	player_set_key(p, 0);
-}
-
-
-
 /*TODO*/
 static void game_update(game_t *g)
 {
 	game_clear_all_snake(g);
 
+	//update each player
 	for (int i = 0; i < game_get_nplayers(g); ++i) {
-		player_t *p = game_get_player(g, 0);
-		update_snake_and_player(g, p);
+		player_t *p = game_get_player(g, i);
+		player_update(p);
 	}
 }
 
@@ -303,7 +229,6 @@ void game_result(game_t *g)
 	system("clear");
 	printf("game over...\n");
 	printf("your length is %d\n", snake_len(player_get_snake(p)));
-
 }
 
 
@@ -320,7 +245,6 @@ int game_update_winsize(game_t *g)
 }
 
 
-
 int game_init(game_t **g) 
 {
 	srand(time(NULL));
@@ -335,14 +259,12 @@ int game_init(game_t **g)
 	int wid = game_get_stage_wid(*g);
 	int hgt = game_get_stage_hgt(*g);
 
-
-	list_init(&(*g)->players);
-
 	game_set_active(*g, 1);
 	game_set_pause(*g, 0);
 	game_set_nfoods(*g, 10);
 	game_set_nplayers(*g, 0);
 
+	list_init(&(*g)->players);
 
 	(*g)->stage     = stage_init(wid, hgt);
 	(*g)->stage_cpy = stage_init(wid, hgt);

@@ -14,6 +14,15 @@ int game_get_stage_wid(game_t *g);
 int game_get_stage_hgt(game_t *g);
 
 
+
+/*TODO make board object*/
+void game_set_nfoods(game_t *g, int n);
+void game_set_food(game_t *g);
+
+char **game_get_stage_cpy(game_t *g);
+char **game_get_stage(game_t *g);
+
+
 void game_attach_player(game_t *g, player_t *p);
 void game_detach_player(game_t *g, player_t *p);
 

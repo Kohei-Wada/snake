@@ -9,6 +9,7 @@ typedef struct snake {
 	int vx;
 	int vy;
 	stype_t type;
+	int dead;
 } snake_t;
 
 
