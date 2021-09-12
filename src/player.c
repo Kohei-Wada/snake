@@ -6,15 +6,16 @@
 #include "ui.h"
 #include "snake.h"
 #include "board.h"
+#include "observer.h"
 
 
 typedef struct player {
+	observer_t o;
 	const char *name;
 	game_t *game;
 	snake_t *snake;
 	ui_t *ui;
 	char *key_buf;
-	int (*update)(player_t *p);
 } player_t;
 
 
@@ -83,9 +84,11 @@ void player_result(player_t *p)
 }
 
 
-/*TODO*/
-static int player_normal_update(player_t *p)
+
+int _player_update(observer_t *o)
 {
+	player_t *p = (player_t *)o;
+
 	game_t *g = player_get_game(p);
 	snake_t *s = player_get_snake(p);
 	board_t *b = game_get_board(g);
@@ -97,11 +100,11 @@ static int player_normal_update(player_t *p)
 
 	if (!game_get_pause(g)) 
 		if (board_put_snake(b, s))
-			game_detach_player(g, p);
+			game_detach_observer(g, o);
 
 
 	switch (player_get_key(p)) {
-	case 'q' : game_detach_player(g, p); break;
+	case 'q' : game_detach_observer(g, o); break;
 	case 'p' : game_set_pause(g, !game_get_pause(g)); break;
 	case 'a' : snake_set_v(s, -1, 0);  break;
 	case 'f' : snake_set_v(s, 1 , 0);  break;
@@ -112,12 +115,6 @@ static int player_normal_update(player_t *p)
 	//clear key buffer
 	player_set_key(p, 0);
 	return 0;
-}
-
-
-int player_update(player_t *p)
-{
-	return p->update(p);
 }
 
 
@@ -133,12 +130,13 @@ int player_init(player_t **p, game_t *g, const char *name)
 	*p = malloc(sizeof(player_t));
 	player_set_game(*p, g);
 
-	(*p)->key_buf = malloc(sizeof(char));
+	/*TODO*/
+	observer_set_update_function(&(*p)->o, _player_update);
+
 	(*p)->name = name;
+	(*p)->key_buf = malloc(sizeof(char));
 
 	board_t *b = game_get_board(g);
-	(*p)->update = player_normal_update;
-
 
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);

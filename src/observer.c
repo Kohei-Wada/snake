@@ -1,13 +1,5 @@
 #include "observer.h"
 
-
-
-typedef struct observer {
-	int(*update)(observer_t *o);
-} observer_t;
-
-
-
 int observer_update(observer_t *o)
 {
 	return o->update(o);

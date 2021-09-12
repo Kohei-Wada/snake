@@ -6,29 +6,31 @@
 #include "game.h"
 #include "board.h"
 #include "list.h"
-#include "player.h"
+#include "observer.h"
 
 
 typedef struct game {
-	list_t   *players;
+	list_t   *observers;
 	board_t  *board;
 	int       pause;
 	int       nfoods;
-	int       nplayers;
+	int       nobservers;
 } game_t;
 
 
-static list_t *game_get_players(game_t *g)
+
+static list_t *game_get_observers(game_t *g)
 {
-	return g->players;
+	return g->observers;
 }
 
 
-static player_t *game_get_player(game_t *g, int i)
+static observer_t *game_get_observer(game_t *g, int i)
 {
-	list_t *players = game_get_players(g);
-	return list_get(players, i);
+	list_t *observers = game_get_observers(g);
+	return list_get(observers, i);
 }
+
 
 
 board_t *game_get_board(game_t *g)
@@ -37,10 +39,11 @@ board_t *game_get_board(game_t *g)
 }
 
 
-static int game_get_nplayers(game_t *g)
+static int game_get_nobservers(game_t *g)
 {
-	return g->nplayers;
+	return g->nobservers;
 }
+
 
 
 int game_get_pause(game_t *g)
@@ -67,17 +70,17 @@ void game_set_nfoods(game_t *g, int n)
 }
 
 
-void game_attach_player(game_t *g, player_t *p)
+void game_attach_observer(game_t *g, observer_t *o)
 {
-	list_add_head(g->players, p);
-	g->nplayers++;
+	list_add_head(g->observers, o);
+	g->nobservers++;
 }
 
 
-void game_detach_player(game_t *g, player_t *p)
+void game_detach_observer(game_t *g, observer_t *o)
 {
-	list_delete(g->players, p);
-	g->nplayers--;
+	list_delete(g->observers, o);
+	g->nobservers--;
 }
 
 
@@ -88,28 +91,23 @@ static void game_update(game_t *g)
 	//clear all snakes
 	board_clear(b);
 
-	//update each player
-	for (int i = 0; i < game_get_nplayers(g); ++i) {
-		player_t *p = game_get_player(g, i);
-		player_update(p);
+	//update each observer
+	for (int i = 0; i < game_get_nobservers(g); ++i) {
+		observer_t *o = game_get_observer(g, i);
+		observer_update(o);
 	}
 }
+
 
 void game_loop(game_t *g)
 {
 	board_t *b = game_get_board(g);
 	board_set_foods(b, game_get_nfoods(g));
 
-	while (game_get_nplayers(g) > 0) {
+	while (game_get_nobservers(g) > 0) {
 		game_update(g);
 		usleep(70000);
 	}
-}
-
-/*TODO*/
-void game_result(game_t *g, player_t *p)
-{
-	return;
 }
 
 
@@ -138,11 +136,13 @@ int game_init(game_t **g)
 
 	if (game_update_winsize(*g, &wid, &hgt))
 		return 1;
-	list_init(&(*g)->players);
+
+	list_init(&(*g)->observers);
+
 	board_init(&(*g)->board, wid, hgt);
 
 	game_set_pause(*g, 0);
-	(*g)->nplayers = 0;
+	(*g)->nobservers = 0;
 
 	/*TODO*/
 	game_set_nfoods(*g, 10);
@@ -154,7 +154,7 @@ int game_init(game_t **g)
 
 void game_free(game_t *g)
 {
-	list_free(g->players);
+	list_free(g->observers);
 	board_free(g->board);
 	free(g);
 }

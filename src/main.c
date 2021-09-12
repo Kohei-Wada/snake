@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "player.h"
+#include "observer.h"
 
 
 void usage(void)
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
 
 	player_init(&p, g, "player1");
 
-	game_attach_player(g, p);
+	game_attach_observer(g, (observer_t *)p);
 
 	game_loop(g);
 
