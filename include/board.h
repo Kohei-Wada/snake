@@ -9,6 +9,7 @@ typedef struct snake snake_t;
 typedef struct board board_t;
 
 int board_put_snake(board_t *b, snake_t *s);
+int board_put_enemy(board_t *b, snake_t *s);
 
 int board_get_wid(board_t *b);
 int board_get_hgt(board_t *b);

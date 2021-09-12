@@ -143,6 +143,7 @@ void board_plot_snake(board_t *b, snake_t *s)
 {
 	int x, y;
 	elem_t ***array = board_get_array(b); 
+
 	for (int i = 0; i < snake_len(s); ++i) {
 		x = snake_get_pos_x(s, i);
 		y = snake_get_pos_y(s, i);
@@ -206,11 +207,39 @@ int board_put_snake(board_t *b, snake_t *s)
 }
 
 
+
+int board_put_enemy(board_t *b, snake_t *s)
+{
+	//snake's next head position
+	int tmpx = snake_get_pos_x(s, 0) + snake_get_vx(s);
+	int tmpy = snake_get_pos_y(s, 0) + snake_get_vy(s);
+
+	elem_t ***array = board_get_array(b);
+	elem_t ***cpy   = board_get_array_cpy(b);
+	
+	switch (elem_get_type(array[tmpx][tmpy])) {
+	case FIELD : 
+		snake_update(s);
+		break;
+
+	case FOOD: 
+		elem_set_type(cpy[tmpx][tmpy], FIELD);
+		snake_add(s, tmpx, tmpy);
+		board_set_food(b);
+		break;
+	
+	default: return 0;
+	}
+
+	return 0;
+}
+
+
 int board_init(board_t **b, int wid, int hgt)
 {
 	*b = malloc(sizeof(board_t));
-	(*b)->wid = wid;
-	(*b)->hgt = hgt;
+	(*b)->wid       = wid;
+	(*b)->hgt       = hgt;
 	(*b)->array     = array_init(wid, hgt);
 	(*b)->array_cpy = array_init(wid, hgt);
 	return 0;

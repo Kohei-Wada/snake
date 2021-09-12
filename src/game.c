@@ -15,6 +15,7 @@ typedef struct game {
 	int       pause;
 	int       nfoods;
 	int       nobservers;
+	int       active; /*TODO*/
 } game_t;
 
 
@@ -30,7 +31,6 @@ static observer_t *game_get_observer(game_t *g, int i)
 	list_t *observers = game_get_observers(g);
 	return list_get(observers, i);
 }
-
 
 
 board_t *game_get_board(game_t *g)
@@ -55,6 +55,18 @@ int game_get_pause(game_t *g)
 void game_set_pause(game_t *g, int p)
 {
 	g->pause = p;
+}
+
+
+int game_get_active(game_t *g)
+{
+	return g->active;
+}
+
+
+void game_set_active(game_t *g, int p)
+{
+	g->active = p;
 }
 
 
@@ -84,12 +96,19 @@ void game_detach_observer(game_t *g, observer_t *o)
 }
 
 
+/*TODO*/
 static void game_update(game_t *g)
 {
 	board_t *b = game_get_board(g);
 
 	//clear all snakes
 	board_clear(b);
+
+	//plot each observer's snake
+	for (int i = 0; i < game_get_nobservers(g); ++i) {
+		observer_t *o = game_get_observer(g, i);
+		observer_plot(o);
+	}
 
 	//update each observer
 	for (int i = 0; i < game_get_nobservers(g); ++i) {
@@ -104,7 +123,7 @@ void game_loop(game_t *g)
 	board_t *b = game_get_board(g);
 	board_set_foods(b, game_get_nfoods(g));
 
-	while (game_get_nobservers(g) > 0) {
+	while (game_get_nobservers(g) > 0 && game_get_active(g)) {
 		game_update(g);
 		usleep(70000);
 	}
@@ -142,6 +161,7 @@ int game_init(game_t **g)
 	board_init(&(*g)->board, wid, hgt);
 
 	game_set_pause(*g, 0);
+	game_set_active(*g, 1);
 	(*g)->nobservers = 0;
 
 	/*TODO*/

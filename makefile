@@ -1,4 +1,4 @@
-OBJECTS = main.o game.o list.o ui.o getch.o snake.o player.o board.o observer.o
+OBJECTS = main.o game.o list.o ui.o getch.o snake.o player.o board.o observer.o enemy.o
 CFLAGS = -g -Wall 
 LDLIBS = #-pthread 
 INCLUDE = -I include 

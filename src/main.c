@@ -5,6 +5,7 @@
 #include "game.h"
 #include "player.h"
 #include "observer.h"
+#include "enemy.h"
 
 
 void usage(void)
@@ -41,7 +42,9 @@ void setup_options(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	game_t *g;
+
 	player_t *p;
+	enemy_t *e;
 
 	setup_options(argc, argv);
 
@@ -49,8 +52,10 @@ int main(int argc, char **argv)
 		return 1;
 
 	player_init(&p, g, "player1");
+	enemy_init(&e, g, "enemy1");
 
 	game_attach_observer(g, (observer_t *)p);
+	//game_attach_observer(g, (observer_t *)e);
 
 	game_loop(g);
 
@@ -58,6 +63,7 @@ int main(int argc, char **argv)
 
 
 	player_free(p);
+	enemy_free(e);
 	game_free(g);
 
 	return 0;

@@ -84,9 +84,23 @@ void player_result(player_t *p)
 }
 
 
-
-int _player_update(observer_t *o)
+void player_plot_snake(observer_t *o)
 {
+
+	player_t *p = (player_t *)o;
+
+	game_t *g = player_get_game(p);
+	snake_t *s = player_get_snake(p);
+	board_t *b = game_get_board(g);
+
+	board_plot_snake(b, s);
+}
+
+
+
+int player_update(observer_t *o)
+{
+
 	player_t *p = (player_t *)o;
 
 	game_t *g = player_get_game(p);
@@ -94,13 +108,14 @@ int _player_update(observer_t *o)
 	board_t *b = game_get_board(g);
 	ui_t *ui = player_get_ui(p);
 
-	/*warning*/
-	board_plot_snake(b, s);
 	ui_update(ui);
 
 	if (!game_get_pause(g)) 
-		if (board_put_snake(b, s))
+		if (board_put_snake(b, s)) {
 			game_detach_observer(g, o);
+			game_set_active(g, 0);
+		}
+
 
 
 	switch (player_get_key(p)) {
@@ -130,8 +145,8 @@ int player_init(player_t **p, game_t *g, const char *name)
 	*p = malloc(sizeof(player_t));
 	player_set_game(*p, g);
 
-	/*TODO*/
-	observer_set_update_function(&(*p)->o, _player_update);
+	observer_set_update_function(&(*p)->o, player_update);
+	observer_set_plot_function(&(*p)->o, player_plot_snake);
 
 	(*p)->name = name;
 	(*p)->key_buf = malloc(sizeof(char));
