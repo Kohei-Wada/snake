@@ -1,7 +1,6 @@
 #include <stdlib.h> 
 #include <time.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
 
 #include "game.h"
 #include "board.h"
@@ -130,35 +129,17 @@ void game_loop(game_t *g)
 }
 
 
-/*TODO*/
-int game_update_winsize(game_t *g, int *wid, int *hgt)
-{
-	struct winsize size;
-	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
-		return 1;
-
-	*wid = size.ws_col;
-	*hgt = size.ws_row - 2; 
-
-	return 0;
-}
-
-
 int game_init(game_t **g) 
 {
-	int wid, hgt;
 	srand(time(NULL));
 
 	*g = malloc(sizeof(game_t));
 	if (!(*g)) 
 		return 1;
 
-	if (game_update_winsize(*g, &wid, &hgt))
-		return 1;
-
 	list_init(&(*g)->observers);
 
-	board_init(&(*g)->board, wid, hgt);
+	board_init(&(*g)->board);
 
 	game_set_pause(*g, 0);
 	game_set_active(*g, 1);
@@ -166,7 +147,6 @@ int game_init(game_t **g)
 
 	/*TODO*/
 	game_set_nfoods(*g, 10);
-
 
 	return 0;
 }

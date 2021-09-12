@@ -33,7 +33,9 @@ typedef enum {
 	PLUSWHITE=23,
 
 	RAINBOW,
+	RANDOM,
 } stype_t;
+
 
 const char *snake_get_shape(snake_t *s);
 

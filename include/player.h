@@ -16,6 +16,7 @@ snake_t *player_get_snake(player_t *p);
 int player_init(player_t **p, game_t *g, const char *name);
 void player_free(player_t *p);
 void player_result(player_t *p);
+void player_print_status(player_t *p);
 
 
 #endif

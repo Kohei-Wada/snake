@@ -130,6 +130,7 @@ const char *snake_get_shape(snake_t *s)
 		return snake_shape[type];
 }
 
+
 stype_t snake_get_type(snake_t *s)
 {
 	return s->type;
@@ -168,6 +169,12 @@ void snake_update(snake_t *s)
 }
 
 
+static stype_t random_type()
+{
+	return random() % 25;
+}
+
+
 int snake_init(snake_t **s, int x, int y, stype_t type) 
 {
 	*s = malloc(sizeof(snake_t));
@@ -180,9 +187,11 @@ int snake_init(snake_t **s, int x, int y, stype_t type)
 	snake_set_len(*s, 0);
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
+
+	if (type == RANDOM)
+		type = random_type();
+
 	snake_set_type(*s, type);
-
-
 	snake_add(*s, x, y);
 	return 0;
 
@@ -192,7 +201,6 @@ int snake_init(snake_t **s, int x, int y, stype_t type)
 
   error0:
 	return 1;
-
 }
 
 

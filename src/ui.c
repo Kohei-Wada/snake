@@ -10,13 +10,8 @@
 
 typedef struct ui {
 	player_t *player;
+	board_t *board;
 } ui_t;
-
-
-void ui_set_player(ui_t *ui, player_t *p)
-{
-	ui->player = p;
-}
 
 
 player_t *ui_get_player(ui_t *ui)
@@ -25,40 +20,21 @@ player_t *ui_get_player(ui_t *ui)
 }
 
 
+board_t *ui_get_board(ui_t *ui)
+{
+	return ui->board;
+}
+
+
 static void ui_display(ui_t *ui)
 {
-	player_t *p = ui_get_player(ui);
-	board_t *b = player_get_board(p);
-
+	board_t *b = ui_get_board(ui);
 	for (int y = 0; y < board_get_hgt(b); ++y) {
-		for (int x = 0; x < board_get_wid(b); ++x) {
-
-			switch (board_get_element_type(b, x, y)) {
-			case FIELD: 
-				printf(" ");
-				break;
-
-			case WALL_H: 
-				printf("=");
-				break;
-
-			case WALL_V: 
-				printf("|");
-				break;
-
-			case FOOD: 
-				printf("\e[31m@\e[0m"); 
-				break;
-
-			case SNAKE:
-				printf("%s", snake_get_shape(board_get_snake(b, x, y)));
-				break;
-			}
-		}
+		for (int x = 0; x < board_get_wid(b); ++x) 
+			printf("%s", board_get_elem_shape(b, x, y));
 		printf("\n");
 	}
-
-	printf("your length is %d\n", snake_len(player_get_snake(p)));
+	player_print_status(ui_get_player(ui));
 }
 
 
@@ -74,16 +50,16 @@ void ui_update(ui_t *ui)
 }
 
 
-int ui_init(ui_t **ui, game_t *g, player_t *p)
+int ui_init(ui_t **ui, player_t *p, board_t *b)
 {
 
 	*ui = malloc(sizeof(ui_t));
-	if (!(*ui)) {
-		perror("malloc"); 
+	if (!(*ui)) 
 		return 1;
-	}
 
-	ui_set_player((*ui), p);
+	(*ui)->player = p;
+	(*ui)->board  = b;
+
 	open_termios();
 
 	return 0;

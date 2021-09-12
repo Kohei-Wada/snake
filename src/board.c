@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "board.h"
 #include "snake.h"
@@ -21,10 +23,12 @@ typedef struct board {
 
 /******************************************************************/
 
+
 etype_t elem_get_type(elem_t *e)
 {
 	return e->type;
 }
+
 
 void elem_set_snake(elem_t *e, snake_t *s)
 {
@@ -100,7 +104,6 @@ static void array_free(elem_t ***array, int wid, int hgt)
 
 
 /******************************************************************/
-
 etype_t board_get_element_type(board_t *b, int x, int y)
 {
 	return elem_get_type(b->array[x][y]);
@@ -131,11 +134,25 @@ int board_get_hgt(board_t *b)
 }
 
 
-
-snake_t *board_get_snake(board_t *b, int x, int y)
+const char *board_get_elem_shape(board_t *b, int x, int y)
 {
 	elem_t ***array = board_get_array(b);
-	return elem_get_snake(array[x][y]);
+	etype_t type = elem_get_type(array[x][y]);
+
+	switch (type) {
+	case FIELD:
+		return " ";
+	case WALL_H:
+		return "=";
+	case WALL_V:
+		return "|";
+	case FOOD:
+		return "\e[31m@\e[0m"; 
+	case SNAKE: {
+		return snake_get_shape(elem_get_snake(array[x][y]));
+		}
+	}
+	return NULL;
 }
 
 
@@ -207,7 +224,7 @@ int board_put_snake(board_t *b, snake_t *s)
 }
 
 
-
+/*TODO*/
 int board_put_enemy(board_t *b, snake_t *s)
 {
 	//snake's next head position
@@ -219,6 +236,7 @@ int board_put_enemy(board_t *b, snake_t *s)
 	
 	switch (elem_get_type(array[tmpx][tmpy])) {
 	case FIELD : 
+	case SNAKE :
 		snake_update(s);
 		break;
 
@@ -235,11 +253,28 @@ int board_put_enemy(board_t *b, snake_t *s)
 }
 
 
-int board_init(board_t **b, int wid, int hgt)
+int board_update_size(board_t *b)
+{
+	struct winsize size;
+	if (ioctl(1, TIOCGWINSZ, &size) == -1) 
+		return 1;
+
+	b->wid = size.ws_col;
+	b->hgt = size.ws_row - 2; 
+
+	return 0;
+}
+
+
+int board_init(board_t **b)
 {
 	*b = malloc(sizeof(board_t));
-	(*b)->wid       = wid;
-	(*b)->hgt       = hgt;
+
+	board_update_size(*b);
+
+	int wid = (*b)->wid;
+	int hgt = (*b)->hgt;
+
 	(*b)->array     = array_init(wid, hgt);
 	(*b)->array_cpy = array_init(wid, hgt);
 	return 0;

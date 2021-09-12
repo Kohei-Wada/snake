@@ -15,7 +15,6 @@ typedef struct enemy {
 } enemy_t;
 
 
-
 void enemy_set_name(enemy_t *e, const char *name)
 {
 	e->name = name;
@@ -76,6 +75,16 @@ int enemy_update(observer_t *o)
 		if (board_put_enemy(b, s))
 			game_detach_observer(g, o);
 
+	int num = random() % 5;
+
+
+	switch (num) {
+	case 0: snake_set_v(s, -1, 0); break;
+	case 1: snake_set_v(s, 1, 0); break;
+	case 2: snake_set_v(s, 0, 1); break;
+	case 3: snake_set_v(s, 0, -1); break;
+	}
+
 	return 0;
 }
 
@@ -95,7 +104,7 @@ int enemy_init(enemy_t **e, game_t *g, const char *name)
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);
 
-	snake_init(&(*e)->snake, wid/3, hgt/3, NORMALBLUE);
+	snake_init(&(*e)->snake, wid/3, hgt/3, RANDOM);
 	return 0;
 }
 
