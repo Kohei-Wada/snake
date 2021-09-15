@@ -8,6 +8,7 @@
 #include "enemy.h"
 
 
+
 void usage(void)
 {
 	fprintf(stderr, "[Usage] snake [-h]\n");
@@ -27,40 +28,35 @@ void usage(void)
 }
 
 
-void multi_play_test()
+void multi_play_test(int n)
 {
 	game_t *g;
-
 	player_t *p;
-	enemy_t *e1, *e2, *e3, *e4;
+
+	enemy_t **enemys = malloc(sizeof(enemy_t*) * n);
 
 	if (game_init(&g))
 		return;
 
 	player_init(&p, g, "player1");
-	enemy_init(&e1, g, "enemy1");
-	enemy_init(&e2, g, "enemy2");
-	enemy_init(&e3, g, "enemy3");
-	enemy_init(&e4, g, "enemy4");
+
+	for (int i = 0; i < n; ++i) {
+		enemy_init(&enemys[i], g, NULL);
+		game_attach_observer(g, (observer_t *)enemys[i]);
+	}
 
 	game_attach_observer(g, (observer_t *)p);
-	game_attach_observer(g, (observer_t *)e1);
-	game_attach_observer(g, (observer_t *)e2);
-	game_attach_observer(g, (observer_t *)e3);
-	game_attach_observer(g, (observer_t *)e4);
 
 	game_loop(g);
-
 	player_result(p);
 
+	for (int i = 0; i < n; ++i) 
+		enemy_free(enemys[i]);
 
 	player_free(p);
-	enemy_free(e1);
-	enemy_free(e2);
-	enemy_free(e3);
-	enemy_free(e4);
-
 	game_free(g);
+
+	free(enemys);
 }
 
 
@@ -88,31 +84,30 @@ void single_play_test()
 }
 
 
-//global flag
-int multi = 0;
-
-
-void setup_options(int argc, char **argv)
-{
-	int opt;
-	while ((opt = getopt(argc, argv, "hms")) != -1) {
-		switch (opt) {
-		case 'h': usage(); break;
-		case 'm': multi = 1; break;
-		case 's': multi = 0; break;
-		default : usage(); break;
-		}
-	}
-}
-
-
 int main(int argc, char **argv)
 {
-	setup_options(argc, argv);
+	int opt;
+	int n_enemys;
 
-	if (multi)
-		multi_play_test();
-	else 
+	while ((opt = getopt(argc, argv, "hn:")) != -1) {
+		switch (opt) {
+		case 'h': 
+			usage(); 
+			break;
+
+		case 'n': 
+			n_enemys = atoi(optarg); 
+			break;
+
+		default : 
+			usage(); 
+			break;
+		}
+	}
+
+	if (n_enemys > 1) 
+		multi_play_test(n_enemys);
+	else
 		single_play_test();
 
 	return 0;

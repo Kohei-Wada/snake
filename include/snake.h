@@ -1,6 +1,7 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
+#define N_SNAKE_TYPES (25)
 
 typedef struct snake snake_t;
 
@@ -13,7 +14,6 @@ typedef enum {
 	NORMALMAGENTA,
 	NORMALCYAAN,
 	NORMALWHITE,
-
 	STARBLACK,
 	STARRED,
 	STARGREEN,
@@ -22,7 +22,6 @@ typedef enum {
 	STARMAGENTA,
 	STARCYAAN,
 	STARWHITE,
-
 	PLUSBLACK,
 	PLUSRED,
 	PLUSGREEN,
@@ -30,10 +29,11 @@ typedef enum {
 	PLUSBLUE,
 	PLUSMAGENTA,
 	PLUSCYAAN,
-	PLUSWHITE=23,
+	PLUSWHITE,
 
 	RAINBOW,
 	RANDOM,
+
 } stype_t;
 
 

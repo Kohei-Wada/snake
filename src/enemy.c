@@ -65,7 +65,6 @@ void enemy_plot_snake(observer_t *o)
 
 int enemy_update(observer_t *o)
 {
-
 	enemy_t *e = (enemy_t *)o;
 	game_t *g = enemy_get_game(e);
 	snake_t *s = enemy_get_snake(e);
@@ -76,8 +75,6 @@ int enemy_update(observer_t *o)
 			game_detach_observer(g, o);
 
 	int num = random() % 5;
-
-
 	switch (num) {
 	case 0: snake_set_v(s, -1, 0); break;
 	case 1: snake_set_v(s, 1, 0); break;
@@ -87,7 +84,6 @@ int enemy_update(observer_t *o)
 
 	return 0;
 }
-
 
 
 int enemy_init(enemy_t **e, game_t *g, const char *name)
@@ -104,7 +100,7 @@ int enemy_init(enemy_t **e, game_t *g, const char *name)
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);
 
-	snake_init(&(*e)->snake, wid/3, hgt/3, RANDOM);
+	snake_init(&(*e)->snake, random()%(wid-2) + 1 , random()%(hgt-2) + 1, RANDOM);
 	return 0;
 }
 

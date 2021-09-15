@@ -201,8 +201,7 @@ int board_put_snake(board_t *b, snake_t *s)
 	int tmpx = snake_get_pos_x(s, 0) + snake_get_vx(s);
 	int tmpy = snake_get_pos_y(s, 0) + snake_get_vy(s);
 
-	elem_t ***array = board_get_array(b);
-	elem_t ***cpy   = board_get_array_cpy(b);
+	elem_t ***array = board_get_array(b), ***cpy   = board_get_array_cpy(b);
 	
 	switch (elem_get_type(array[tmpx][tmpy])) {
 	case FIELD : 
@@ -231,8 +230,7 @@ int board_put_enemy(board_t *b, snake_t *s)
 	int tmpx = snake_get_pos_x(s, 0) + snake_get_vx(s);
 	int tmpy = snake_get_pos_y(s, 0) + snake_get_vy(s);
 
-	elem_t ***array = board_get_array(b);
-	elem_t ***cpy   = board_get_array_cpy(b);
+	elem_t ***array = board_get_array(b), ***cpy   = board_get_array_cpy(b);
 	
 	switch (elem_get_type(array[tmpx][tmpy])) {
 	case FIELD : 

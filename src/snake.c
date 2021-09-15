@@ -171,7 +171,7 @@ void snake_update(snake_t *s)
 
 static stype_t random_type()
 {
-	return random() % 25;
+	return random() % N_SNAKE_TYPES;
 }
 
 
