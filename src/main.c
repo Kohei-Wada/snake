@@ -15,7 +15,7 @@ void usage(void)
 	fprintf(stderr, "[Flags]\n");
 	fprintf(stderr, "-h    Show this help\n");
 	fprintf(stderr, "-n N  If N is set to a value greater than 0,\n");
-	fprintf(stderr, "      that may enemy snakes will be placed on the stage.\n");
+	fprintf(stderr, "      that many enemy snakes will be placed on the stage.\n");
 
 	fprintf(stderr, "\n");
 
@@ -44,7 +44,7 @@ void multi_play_mode(int n)
 	player_init(&p, g, "player1");
 
 	for (int i = 0; i < n; ++i) {
-		enemy_init(&enemys[i], g, NULL);
+		enemy_init(&enemys[i], g, "enemy");
 		game_attach_observer(g, (observer_t *)enemys[i]);
 	}
 
@@ -53,8 +53,9 @@ void multi_play_mode(int n)
 	game_loop(g);
 	player_result(p);
 
-	for (int i = 0; i < n; ++i) 
+	for (int i = 0; i < n; ++i) {
 		enemy_free(enemys[i]);
+	}
 
 	player_free(p);
 	game_free(g);
