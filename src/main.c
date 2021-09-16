@@ -13,7 +13,10 @@ void usage(void)
 {
 	fprintf(stderr, "[Usage] snake [-h]\n");
 	fprintf(stderr, "[Flags]\n");
-	fprintf(stderr, "-h    show this help\n");
+	fprintf(stderr, "-h    Show this help\n");
+	fprintf(stderr, "-n N  If N is set to a value greater than 0,\n");
+	fprintf(stderr, "      that may enemy snakes will be placed on the stage.\n");
+
 	fprintf(stderr, "\n");
 
 	fprintf(stderr, "[Operations]\n");
@@ -28,7 +31,7 @@ void usage(void)
 }
 
 
-void multi_play_test(int n)
+void multi_play_mode(int n)
 {
 	game_t *g;
 	player_t *p;
@@ -60,7 +63,7 @@ void multi_play_test(int n)
 }
 
 
-void single_play_test()
+void single_play_mode()
 {
 	game_t *g;
 
@@ -106,9 +109,9 @@ int main(int argc, char **argv)
 	}
 
 	if (n_enemys > 1) 
-		multi_play_test(n_enemys);
+		multi_play_mode(n_enemys);
 	else
-		single_play_test();
+		single_play_mode();
 
 	return 0;
 }
