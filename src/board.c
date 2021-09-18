@@ -150,7 +150,10 @@ const char *board_get_elem_shape(board_t *b, int x, int y)
 		return "\e[31m@\e[0m"; 
 	case SNAKE: {
 		return snake_get_shape(elem_get_snake(array[x][y]));
-		}
+	}
+	case SNAKE_HEAD: {
+		return snake_get_head_shape(elem_get_snake(array[x][y]));
+	}
 	}
 	return NULL;
 }
@@ -161,7 +164,12 @@ void board_plot_snake(board_t *b, snake_t *s)
 	int x, y;
 	elem_t ***array = board_get_array(b); 
 
-	for (int i = 0; i < snake_len(s); ++i) {
+	x = snake_get_pos_x(s, 0);
+	y = snake_get_pos_y(s, 0);
+	elem_set_type(array[x][y], SNAKE_HEAD);
+	elem_set_snake(array[x][y], s);
+
+	for (int i = 1; i < snake_len(s); ++i) {
 		x = snake_get_pos_x(s, i);
 		y = snake_get_pos_y(s, i);
 		elem_set_type(array[x][y], SNAKE);

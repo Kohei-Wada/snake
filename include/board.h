@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-enum elem_type {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE};
+enum elem_type {FIELD = 0, WALL_H, WALL_V, FOOD, SNAKE, SNAKE_HEAD};
 typedef enum elem_type etype_t;
 typedef struct snake snake_t;
 typedef struct board board_t;

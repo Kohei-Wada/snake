@@ -158,7 +158,7 @@ const char *snake_get_head_shape(snake_t *s)
 		return head_shape[c];
 	else if(vx == -1)
 		return head_shape[c + 7];
-	else if (vy == 1)
+	else if (vy == -1)
 		return head_shape[c + 7*2];
 	else 
 		return  head_shape[c + 7*3];

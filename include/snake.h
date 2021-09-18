@@ -44,5 +44,6 @@ int snake_len(snake_t *s);
 int snake_get_pos_x(snake_t *s, int index);
 int snake_get_pos_y(snake_t *s, int index);
 
+const char *snake_get_head_shape(snake_t *s);
 
 #endif
