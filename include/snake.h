@@ -5,36 +5,22 @@
 
 typedef struct snake snake_t;
 
-typedef enum { 
-	//NORMALBLACK=0,
-	NORMALRED,
-	NORMALGREEN,
-	NORMALYELLOW,
-	NORMALBLUE,
-	NORMALMAGENTA,
-	NORMALCYAAN,
-	NORMALWHITE,
-	//STARBLACK,
-	STARRED,
-	STARGREEN,
-	STARYELLOW,
-	STARBLUE,
-	STARMAGENTA,
-	STARCYAAN,
-	STARWHITE,
-	//PLUSBLACK,
-	PLUSRED,
-	PLUSGREEN,
-	PLUSYELLOW,
-	PLUSBLUE,
-	PLUSMAGENTA,
-	PLUSCYAAN,
-	PLUSWHITE,
-
-	RAINBOW,
-	RANDOM,
-
+typedef enum {
+	NORMAL=0,
+	STAR,
+	PLUS,
 } stype_t;
+
+typedef enum {
+	//BLACK,
+	RED,
+	GREEN,
+	YELLOW,
+	BLUE,
+	MAGENTA,
+	CYAAN,
+	WHITE,
+} scolor_t;
 
 
 const char *snake_get_shape(snake_t *s);
@@ -48,7 +34,7 @@ void snake_set_vx(snake_t *s, int v);
 int snake_get_vy(snake_t *s);
 void snake_set_vy(snake_t *s, int v);
 
-int snake_init(snake_t **s, int x, int y, stype_t type);
+int snake_init(snake_t **s, int x, int y);
 void snake_free(snake_t *s);
 
 void snake_add(snake_t *s, int x, int y);

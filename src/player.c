@@ -155,7 +155,7 @@ int player_init(player_t **p, game_t *g, const char *name)
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);
 
-	snake_init(&(*p)->snake, wid/2, hgt/2, RANDOM);
+	snake_init(&(*p)->snake, wid/2, hgt/2);
 	ui_init(&(*p)->ui, *p, b);
 	return 0;
 }

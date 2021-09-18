@@ -100,7 +100,7 @@ int enemy_init(enemy_t **e, game_t *g, const char *name)
 	int wid = board_get_wid(b);
 	int hgt = board_get_hgt(b);
 
-	snake_init(&(*e)->snake, random()%(wid-2) + 1 , random()%(hgt-2) + 1, RANDOM);
+	snake_init(&(*e)->snake, random()%(wid-2) + 1 , random()%(hgt-2) + 1);
 	return 0;
 }
 

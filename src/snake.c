@@ -4,7 +4,6 @@
 #include "snake.h"
 
 
-
 typedef struct position {
 	int x, y;
 } pos_t;
@@ -15,7 +14,8 @@ typedef struct snake {
 	int len;
 	int vx;
 	int vy;
-	stype_t type;
+	stype_t stype;
+	scolor_t color;
 	int dead;
 } snake_t;
 
@@ -90,6 +90,80 @@ void snake_set_v(snake_t *s, int tvx, int tvy)
 }
 
 
+void snake_set_color(snake_t *s, scolor_t c)
+{
+	s->color = c;
+}
+
+
+scolor_t snake_get_color(snake_t *s)
+{
+	return s->color;
+}
+
+
+void snake_set_stype(snake_t *s, stype_t t)
+{
+	s->stype = t;
+}
+
+
+stype_t snake_get_stype(snake_t *s)
+{ 
+	return s->stype;
+}
+
+
+const char *head_shape[] = {
+	"\e[31m>\e[0m",
+	"\e[32m>\e[0m",
+	"\e[33m>\e[0m",
+	"\e[34m>\e[0m",
+	"\e[35m>\e[0m",
+	"\e[36m>\e[0m",
+	"\e[37m>\e[0m",
+
+	"\e[31m<\e[0m",
+	"\e[32m<\e[0m",
+	"\e[33m<\e[0m",
+	"\e[34m<\e[0m",
+	"\e[35m<\e[0m",
+	"\e[36m<\e[0m",
+	"\e[37m<\e[0m",
+
+	"\e[31m^\e[0m",
+	"\e[32m^\e[0m",
+	"\e[33m^\e[0m",
+	"\e[34m^\e[0m",
+	"\e[35m^\e[0m",
+	"\e[36m^\e[0m",
+	"\e[37m^\e[0m",
+
+	"\e[31mv\e[0m",
+	"\e[32mv\e[0m",
+	"\e[33mv\e[0m",
+	"\e[34mv\e[0m",
+	"\e[35mv\e[0m",
+	"\e[36mv\e[0m",
+	"\e[37mv\e[0m",
+};
+
+
+/*TODO*/
+const char *snake_get_head_shape(snake_t *s)
+{
+	int vx = snake_get_vx(s), vy = snake_get_vy(s);
+	scolor_t c = snake_get_color(s);
+	if (vx == 1)
+		return head_shape[c];
+	else if(vx == -1)
+		return head_shape[c + 7];
+	else if (vy == 1)
+		return head_shape[c + 7*2];
+	else 
+		return  head_shape[c + 7*3];
+}
+
 const char *snake_shape[] = {
 	//"\e[30mo\e[0m",
 	"\e[31mo\e[0m",
@@ -120,26 +194,10 @@ const char *snake_shape[] = {
 };
 
 
+/*WARNING*/
 const char *snake_get_shape(snake_t *s)
 {
-	stype_t type = s->type;
-
-	if (type == RAINBOW)
-		return snake_shape[random()%20];
-	else 
-		return snake_shape[type];
-}
-
-
-stype_t snake_get_type(snake_t *s)
-{
-	return s->type;
-}
-
-
-void snake_set_type(snake_t *s, stype_t t)
-{
-	s->type = t;
+	return snake_shape[snake_get_stype(s) * 7 + snake_get_color(s)];
 }
 
 
@@ -169,13 +227,18 @@ void snake_update(snake_t *s)
 }
 
 
-static stype_t random_type()
+static stype_t random_snake_type() 
 {
-	return random() % N_SNAKE_TYPES;
+	return random() % 3;
+}
+
+static scolor_t random_snake_color()
+{
+	return random() % 7;
 }
 
 
-int snake_init(snake_t **s, int x, int y, stype_t type) 
+int snake_init(snake_t **s, int x, int y) 
 {
 	*s = malloc(sizeof(snake_t));
 	if (!(*s)) 
@@ -188,13 +251,12 @@ int snake_init(snake_t **s, int x, int y, stype_t type)
 	snake_set_vx(*s, 1);
 	snake_set_vy(*s, 0);
 
-	if (type == RANDOM)
-		type = random_type();
-
-	snake_set_type(*s, type);
 	snake_add(*s, x, y);
-	return 0;
 
+	snake_set_stype(*s, random_snake_type());
+	snake_set_color(*s, random_snake_color());
+
+	return 0;
 
   error1:
 	free(*s);
