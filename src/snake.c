@@ -91,7 +91,7 @@ void snake_set_v(snake_t *s, int tvx, int tvy)
 
 
 const char *snake_shape[] = {
-	"\e[30mo\e[0m",
+	//"\e[30mo\e[0m",
 	"\e[31mo\e[0m",
 	"\e[32mo\e[0m",
 	"\e[33mo\e[0m",
@@ -100,7 +100,7 @@ const char *snake_shape[] = {
 	"\e[36mo\e[0m",
 	"\e[37mo\e[0m",
 
-	"\e[30m*\e[0m",
+	//"\e[30m*\e[0m",
 	"\e[31m*\e[0m",
 	"\e[32m*\e[0m",
 	"\e[33m*\e[0m",
@@ -109,7 +109,7 @@ const char *snake_shape[] = {
 	"\e[36m*\e[0m",
 	"\e[37m*\e[0m",
 
-	"\e[30m+\e[0m",
+	//"\e[30m+\e[0m",
 	"\e[31m+\e[0m",
 	"\e[32m+\e[0m",
 	"\e[33m+\e[0m",
@@ -125,7 +125,7 @@ const char *snake_get_shape(snake_t *s)
 	stype_t type = s->type;
 
 	if (type == RAINBOW)
-		return snake_shape[random()%23];
+		return snake_shape[random()%20];
 	else 
 		return snake_shape[type];
 }

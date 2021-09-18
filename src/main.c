@@ -16,6 +16,8 @@ void usage(void)
 	fprintf(stderr, "-h    Show this help\n");
 	fprintf(stderr, "-n N  If N is set to a value greater than 0,\n");
 	fprintf(stderr, "      that many enemy snakes will be placed on the stage.\n");
+	fprintf(stderr, "      The enemys is too stupid to die soon, The enemys is set\n");
+	fprintf(stderr, "      not to die.\n");
 
 	fprintf(stderr, "\n");
 
