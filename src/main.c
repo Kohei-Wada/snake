@@ -66,34 +66,9 @@ void multi_play_mode(int n)
 }
 
 
-void single_play_mode()
-{
-	game_t *g;
-
-	player_t *p;
-
-
-	if (game_init(&g))
-		return;
-
-	player_init(&p, g, "player1");
-	game_attach_observer(g, (observer_t *)p);
-	game_loop(g);
-
-	player_result(p);
-
-
-	player_free(p);
-
-	game_free(g);
-
-}
-
-
 int main(int argc, char **argv)
 {
-	int opt;
-	int n_enemys;
+	int opt, n_enemys = 0;
 
 	while ((opt = getopt(argc, argv, "hn:")) != -1) {
 		switch (opt) {
@@ -111,10 +86,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (n_enemys > 1) 
-		multi_play_mode(n_enemys);
-	else
-		single_play_mode();
+	multi_play_mode(n_enemys);
 
 	return 0;
 }
