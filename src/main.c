@@ -11,7 +11,7 @@
 
 void usage(void)
 {
-	fprintf(stderr, "[Usage] snake [-h|-n N]\n");
+	fprintf(stderr, "[Usage] snake [-h|-n N|-p X]\n");
 	fprintf(stderr, "[Flags]\n");
 	fprintf(stderr, "-h    Show this help\n");
 	fprintf(stderr, "-n N  If N is set to a value greater than 0,\n");
