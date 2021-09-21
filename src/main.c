@@ -18,6 +18,7 @@ void usage(void)
 	fprintf(stderr, "      that many enemy snakes will be placed on the stage.\n");
 	fprintf(stderr, "      The enemys is too stupid to die soon, The enemys is set\n");
 	fprintf(stderr, "      not to die.\n");
+	fprintf(stderr, "-p X  set player name to X.\n");
 
 	fprintf(stderr, "\n");
 
@@ -33,7 +34,7 @@ void usage(void)
 }
 
 
-void multi_play_mode(int n)
+void multi_play_mode(int n, const char *pname)
 {
 	game_t *g;
 	player_t *p;
@@ -43,7 +44,7 @@ void multi_play_mode(int n)
 	if (game_init(&g))
 		return;
 
-	player_init(&p, g, "player1");
+	player_init(&p, g, pname);
 
 	for (int i = 0; i < n; ++i) {
 		enemy_init(&enemys[i], g, "enemy");
@@ -70,7 +71,9 @@ int main(int argc, char **argv)
 {
 	int opt, n_enemys = 0;
 
-	while ((opt = getopt(argc, argv, "hn:")) != -1) {
+	const char *pname = "player1";
+
+	while ((opt = getopt(argc, argv, "hn:p:")) != -1) {
 		switch (opt) {
 		case 'h': 
 			usage(); 
@@ -80,13 +83,18 @@ int main(int argc, char **argv)
 			n_enemys = atoi(optarg); 
 			break;
 
+		case 'p':
+			pname = (const char *)optarg;
+			break;
+
+
 		default : 
 			usage(); 
 			break;
 		}
 	}
 
-	multi_play_mode(n_enemys);
+	multi_play_mode(n_enemys, pname);
 
 	return 0;
 }
