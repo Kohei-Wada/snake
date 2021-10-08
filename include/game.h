@@ -15,6 +15,7 @@ int game_init(game_t **g);
 void game_free(game_t *g);
 void game_loop(game_t *g);
 
+void game_set_nfoods(game_t *g, int n);
 
 void game_set_active(game_t *g, int a);
 void game_set_pause(game_t *g, int p);

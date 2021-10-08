@@ -11,7 +11,7 @@
 
 void usage(void)
 {
-	fprintf(stderr, "[Usage] snake [-h|-n N|-p X]\n");
+	fprintf(stderr, "[Usage] snake [-h|-n N|-p X|-f N]\n");
 	fprintf(stderr, "[Flags]\n");
 	fprintf(stderr, "-h    Show this help\n");
 	fprintf(stderr, "-n N  If N is set to a value greater than 0,\n");
@@ -19,6 +19,7 @@ void usage(void)
 	fprintf(stderr, "      The enemys is too stupid to die soon, The enemys is set\n");
 	fprintf(stderr, "      not to die.\n");
 	fprintf(stderr, "-p X  set player name to X.\n");
+	fprintf(stderr, "-f N  set number of foods to N.\n");
 
 	fprintf(stderr, "\n");
 
@@ -34,7 +35,7 @@ void usage(void)
 }
 
 
-void multi_play_mode(int n, const char *pname)
+void multi_play_mode(int n, const char *pname, int n_foods)
 {
 	game_t *g;
 	player_t *p;
@@ -43,6 +44,7 @@ void multi_play_mode(int n, const char *pname)
 
 	if (game_init(&g))
 		return;
+	game_set_nfoods(g, n_foods);
 
 	player_init(&p, g, pname);
 
@@ -69,11 +71,11 @@ void multi_play_mode(int n, const char *pname)
 
 int main(int argc, char **argv)
 {
-	int opt, n_enemys = 0;
+	int opt, n_enemys = 0, n_foods = 10;
 
 	const char *pname = "player1";
 
-	while ((opt = getopt(argc, argv, "hn:p:")) != -1) {
+	while ((opt = getopt(argc, argv, "hn:p:f:")) != -1) {
 		switch (opt) {
 		case 'h': 
 			usage(); 
@@ -87,6 +89,9 @@ int main(int argc, char **argv)
 			pname = (const char *)optarg;
 			break;
 
+		case 'f': 
+			n_foods = atoi(optarg);
+			break;
 
 		default : 
 			usage(); 
@@ -94,7 +99,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	multi_play_mode(n_enemys, pname);
+	multi_play_mode(n_enemys, pname, n_foods);
 
 	return 0;
 }

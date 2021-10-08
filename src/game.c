@@ -44,7 +44,6 @@ static int game_get_nobservers(game_t *g)
 }
 
 
-
 int game_get_pause(game_t *g)
 {
 	return g->pause;
